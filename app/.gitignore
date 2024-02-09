@@ -1,1 +1,49 @@
-/build
+# Generated files
+.idea/
+.vscode/
+build/
+gradle/
+gen/
+output/
+
+# Temporary files
+.project
+.classpath
+.settings/
+local.properties
+*.swp
+*~
+
+# Version control systems
+.git/
+.svn/
+.hg/
+
+# System-generated files
+.DS_Store
+thumbcache/
+armeabi-*
+
+# Test-related files
+**/build/
+**/coverage/
+**/tests/
+
+# TensorFlow Lite
+*.tflite
+*.pb
+
+# Quantization/optimization artifacts
+quant_*
+optimized_*
+
+# IDE-specific settings (example for Android Studio)
+.idea/workspace.xml
+.idea/libraries/
+
+# Local properties (e.g., API keys)
+local.properties
+
+# Security/privacy (customizable)
+secrets.properties
+key_store.jks
