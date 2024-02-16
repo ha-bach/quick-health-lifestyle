@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "663956577654",
+    "project_id": "quickhealthlifestyle",
+    "storage_bucket": "quickhealthlifestyle.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:663956577654:android:27477eada228d00fb42e57",
+        "android_client_info": {
+          "package_name": "com.example.myapplication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBiLmbJvfg_E4AgQTlKRrHr16BUIwZchlo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
