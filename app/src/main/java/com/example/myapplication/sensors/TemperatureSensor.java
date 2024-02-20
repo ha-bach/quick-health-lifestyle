@@ -10,7 +10,7 @@ import android.util.Log;
 public class TemperatureSensor {
 
     private final SensorManager sensorManager;
-    private Sensor temperatureSensor;
+    private Sensor sensor;
     private float lastTemperature;
     private int sensorAccuracy;
 
@@ -19,25 +19,25 @@ public class TemperatureSensor {
     public TemperatureSensor(Context context) {
         sensorManager = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
         if (sensorManager != null) {
-            temperatureSensor = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
-            if (temperatureSensor == null) {
+            sensor = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
+            if (sensor == null) {
                 Log.e(TAG, "No ambient temperature sensor detected.");
             }
         }
     }
 
-    public boolean isTemperatureSensorAvailable() {
-        return temperatureSensor != null;
+    public boolean isSensorAvailable() {
+        return sensor != null;
     }
 
     public void startTemperatureUpdates() {
-        if (isTemperatureSensorAvailable()) {
-            sensorManager.registerListener(sensorEventListener, temperatureSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        if (isSensorAvailable()) {
+            sensorManager.registerListener(sensorEventListener, sensor, SensorManager.SENSOR_DELAY_NORMAL);
         }
     }
 
     public void stopTemperatureUpdates() {
-        if (isTemperatureSensorAvailable()) {
+        if (isSensorAvailable()) {
             sensorManager.unregisterListener(sensorEventListener);
         }
     }
