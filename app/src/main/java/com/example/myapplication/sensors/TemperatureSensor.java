@@ -11,8 +11,8 @@ public class TemperatureSensor implements SensorEventListener{
 
     private final SensorManager sensorManager;
     private Sensor sensor;
-    private float lastTemperature;
-    private int sensorAccuracy;
+    private float temperature = Float.NaN;
+    private int sensorAccuracy = -1;
 
     private static final String TAG = "TemperatureSensor";
 
@@ -30,8 +30,8 @@ public class TemperatureSensor implements SensorEventListener{
         return sensor != null;
     }
 
-    public float getLastTemperature() {
-        return lastTemperature;
+    public float getTemperature() {
+        return temperature;
     }
 
     public int getSensorAccuracy() {
@@ -39,7 +39,7 @@ public class TemperatureSensor implements SensorEventListener{
     }
 
     public void onSensorChanged(SensorEvent event) {
-            lastTemperature = event.values[0];
+            temperature = event.values[0];
     };
 
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
