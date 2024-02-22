@@ -7,7 +7,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.util.Log;
 
-public class TemperatureSensor {
+public class TemperatureSensor implements SensorEventListener{
 
     private final SensorManager sensorManager;
     private Sensor sensor;
@@ -30,18 +30,6 @@ public class TemperatureSensor {
         return sensor != null;
     }
 
-    public void startTemperatureUpdates() {
-        if (isSensorAvailable()) {
-            sensorManager.registerListener(sensorEventListener, sensor, SensorManager.SENSOR_DELAY_NORMAL);
-        }
-    }
-
-    public void stopTemperatureUpdates() {
-        if (isSensorAvailable()) {
-            sensorManager.unregisterListener(sensorEventListener);
-        }
-    }
-
     public float getLastTemperature() {
         return lastTemperature;
     }
@@ -50,17 +38,11 @@ public class TemperatureSensor {
         return sensorAccuracy;
     }
 
-    private final SensorEventListener sensorEventListener = new SensorEventListener() {
-        @Override
-        public void onSensorChanged(SensorEvent event) {
-            if (event.sensor.getType() == Sensor.TYPE_AMBIENT_TEMPERATURE) {
-                lastTemperature = event.values[0];
-            }
-        }
-
-        @Override
-        public void onAccuracyChanged(Sensor sensor, int accuracy) {
-            sensorAccuracy = accuracy;
-        }
+    public void onSensorChanged(SensorEvent event) {
+            lastTemperature = event.values[0];
     };
+
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        sensorAccuracy = accuracy;
+    }
 }
