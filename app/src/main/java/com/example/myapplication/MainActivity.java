@@ -1,24 +1,20 @@
 package com.example.myapplication;
 
 import android.os.Bundle;
-import android.widget.Toast;
-
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import com.example.myapplication.databinding.ActivityMainBinding;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.example.myapplication.databinding.ActivityMainBinding;
+import com.example.myapplication.workers.TemperatureHumidityWorker;
+
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,8 +42,8 @@ private ActivityMainBinding binding;
 //                Toast.makeText(getApplicationContext(), "Failure", Toast.LENGTH_LONG).show();
 //            }
 //        });
-     binding = ActivityMainBinding.inflate(getLayoutInflater());
-     setContentView(binding.getRoot());
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -58,6 +54,12 @@ private ActivityMainBinding binding;
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
+
+        // uncomment to start hydration background work
+//        PeriodicWorkRequest temperatureWorkRequest =
+//                new PeriodicWorkRequest.Builder(TemperatureHumidityWorker.class, 15, TimeUnit.MINUTES).addTag("HYDRATION_CHECK").build();
+//        WorkManager.getInstance(this).enqueue(temperatureWorkRequest);
     }
+
 
 }
