@@ -5,6 +5,7 @@ build/
 gradle/
 gen/
 output/
+.gradle/
 
 # Temporary files
 .project
