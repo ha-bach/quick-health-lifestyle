@@ -48,3 +48,6 @@ local.properties
 # Security/privacy (customizable)
 secrets.properties
 key_store.jks
+
+# Personal notes
+hydration_plan.txt
