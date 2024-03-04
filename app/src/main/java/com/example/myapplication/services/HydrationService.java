@@ -29,8 +29,6 @@ public class HydrationService extends Service {
     }
 
     private double calculateHydrationRecommendation() {
-        double intake;
-
         // TODO: replace with Firebase code
         double age = 35;
         String sex = "female";
@@ -49,9 +47,7 @@ public class HydrationService extends Service {
         double temperatureFactor = TEMPERATURE_INTAKE_FACTOR * ((temperature - 25) / 10);
         double humidityFactor = HUMIDITY_INTAKE_FACTOR * (humidity / 100);
 
-        intake = BASE_INTAKE * ageFactor * weightFactor * sexFactor * temperatureFactor * humidityFactor;
-
-        return intake;
+        return BASE_INTAKE * ageFactor * weightFactor * sexFactor * temperatureFactor * humidityFactor;
     }
 
 
