@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
+import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -18,7 +19,7 @@ public class HydrationService extends Service {
 
 
     public class HydrationBinder extends Binder {
-        HydrationService getService() {
+        public HydrationService getService() {
             return HydrationService.this;
         }
     }
@@ -28,7 +29,7 @@ public class HydrationService extends Service {
         // add Firebase listener code here: https://chat.openai.com/c/4332d77b-c237-423d-b014-803f7dd99f35
     }
 
-    private double calculateHydrationRecommendation() {
+    public double getHydrationRecommendation() {
         // TODO: replace with Firebase code
         double age = 35;
         String sex = "female";
@@ -36,18 +37,24 @@ public class HydrationService extends Service {
         double temperature = 25;
         double humidity = 40;
 
-        double ageFactor = 1.0 + (age - 18) * 0.02;
-        double weightFactor = 1.0 + (weight - 70) * 0.01;
-        double sexFactor = 1;
-        if (sex.equalsIgnoreCase("male")) {
-            sexFactor = MALE_INTAKE_FACTOR;
-        } else if (sex.equalsIgnoreCase("female")) {
-            sexFactor = FEMALE_INTAKE_FACTOR;
-        }
-        double temperatureFactor = TEMPERATURE_INTAKE_FACTOR * ((temperature - 25) / 10);
-        double humidityFactor = HUMIDITY_INTAKE_FACTOR * (humidity / 100);
+        double intake;
+        double ageFactor = 1.0 + (age - 18) * 0.02; // Adjusted by 2% per year after 18
+        intake = BASE_INTAKE * ageFactor;
 
-        return BASE_INTAKE * ageFactor * weightFactor * sexFactor * temperatureFactor * humidityFactor;
+        if (sex.equalsIgnoreCase("male")) {
+            intake *= MALE_INTAKE_FACTOR;
+        } else if (sex.equalsIgnoreCase("female")) {
+            intake *= FEMALE_INTAKE_FACTOR;
+        }
+
+        intake += BASE_INTAKE * HUMIDITY_INTAKE_FACTOR * (humidity / 100);
+
+        intake += BASE_INTAKE * TEMPERATURE_INTAKE_FACTOR * ((temperature - 25) / 10);
+
+        double weightFactor = 1.0 + (weight - 70) * 0.02;
+        intake += weight * 30 * weightFactor;
+
+        return intake;
     }
 
 

@@ -1,26 +1,34 @@
 package com.example.myapplication;
 
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.util.Log;
+import android.widget.TextView;
+
+import com.example.myapplication.services.HydrationService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.PeriodicWorkRequest;
-import androidx.work.WorkManager;
 
 import com.example.myapplication.databinding.ActivityMainBinding;
-import com.example.myapplication.workers.TemperatureHumidityWorker;
 
-import java.util.concurrent.TimeUnit;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
 private ActivityMainBinding binding;
 
     //FirebaseFirestore firestore; //Testing firebase instance uncomment for testing
+    private HydrationService hydrationService;
+    private boolean hydrationBound = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,12 +62,40 @@ private ActivityMainBinding binding;
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
-
-        // uncomment to start hydration background work
-//        PeriodicWorkRequest temperatureWorkRequest =
-//                new PeriodicWorkRequest.Builder(TemperatureHumidityWorker.class, 15, TimeUnit.MINUTES).addTag("HYDRATION_CHECK").build();
-//        WorkManager.getInstance(this).enqueue(temperatureWorkRequest);
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Intent intent = new Intent(this, HydrationService.class);
+        bindService(intent, connection, Context.BIND_AUTO_CREATE);
+    }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (hydrationBound) {
+            unbindService(connection);
+            hydrationBound = false;
+        }
+    }
+
+    private ServiceConnection connection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                                       IBinder service) {
+            Log.d("MainActivity", "Hydration Service connected.");
+            HydrationService.HydrationBinder hydrationBinder = (HydrationService.HydrationBinder) service;
+            hydrationService = hydrationBinder.getService();
+            hydrationBound = true;
+            TextView textView = findViewById(R.id.text_home);
+            textView.setText(String.format(Locale.US, "%.2f",hydrationService.getHydrationRecommendation()));
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            hydrationBound = false;
+        }
+    };
 }
