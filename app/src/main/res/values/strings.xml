@@ -1,6 +1,90 @@
 <resources>
-    <string name="app_name">My Application</string>
+    <string name="app_name">QuickHealthLifestyle</string>
+
     <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_insights">Insights</string>
+    <string name="title_profile">Profile</string>
+
+    <string name="home_welcome">Welcome, User!</string>
+    <string name="home_recommended_sleep">Recommended Sleep:</string>
+    <string name="home_target_hours">Target Hours:</string>
+    <string name="home_recommended_hydration">Recommended Hydration:</string>
+    <string name="home_recommended_exercise">Recommended Exercise:</string>
+    <string name="home_status">Status:</string>
+
+    <string name="home_placeholder_rec1">7 hours</string>
+    <string name="home_placeholder_status1">12 AM - 7 AM</string>
+    <string name="home_placeholder_rec2">9 cups</string>
+    <string name="home_placeholder_status2">Incomplete</string>
+    <string name="home_placeholder_rec3">60 minutes daily</string>
+
+    <string name="insights_intro">Displaying Insights of User:</string>
+    <string name="insights_sleep">Sleep:</string>
+    <string name="insights_hydration">Hydration:</string>
+    <string name="insights_exercise">Exercise:</string>
+
+    <string name="profile_intro">Displaying Profile for User:</string>
+    <string name="profile_username">Username:</string>
+    <string name="profile_password">Password:</string>
+    <string name="profile_height">Height (Inches):</string>
+    <string name="profile_weight">Weight (Pounds):</string>
+    <string name="profile_sex">Sex:</string>
+    <string-array name="sex_array">
+        <item>Male</item>
+        <item>Female</item>
+    </string-array>
+    <string name="profile_age">Age:</string>
+    <string name="profile_preferred_gym_time">Preferred Gym Time:</string>
+    <string-array name="profile_preferred_gym_time_array">
+        <item>5:00 AM</item>
+        <item>5:30 AM</item>
+        <item>6:00 AM</item>
+        <item>6:30 AM</item>
+        <item>7:00 AM</item>
+        <item>7:30 AM</item>
+        <item>8:00 AM</item>
+        <item>8:30 AM</item>
+        <item>9:00 AM</item>
+        <item>9:30 AM</item>
+        <item>10:00 AM</item>
+        <item>10:30 AM</item>
+        <item>11:00 AM</item>
+        <item>11:30 AM</item>
+        <item>12:00 PM</item>
+        <item>12:30 PM</item>
+        <item>1:00 PM</item>
+        <item>1:30 PM</item>
+        <item>2:00 PM</item>
+        <item>2:30 PM</item>
+        <item>3:00 PM</item>
+        <item>3:30 PM</item>
+        <item>4:00 PM</item>
+        <item>4:30 PM</item>
+        <item>5:00 PM</item>
+        <item>5:30 PM</item>
+        <item>6:00 PM</item>
+        <item>6:30 PM</item>
+        <item>7:00 PM</item>
+        <item>7:30 PM</item>
+        <item>8:00 PM</item>
+        <item>8:30 PM</item>
+        <item>9:00 PM</item>
+        <item>9:30 PM</item>
+        <item>10:00 PM</item>
+        <item>10:30 PM</item>
+        <item>11:00 PM</item>
+        <item>11:30 PM</item>
+        <item>12:00 AM</item>
+        <item>12:30 AM</item>
+        <item>1:00 AM</item>
+        <item>1:30 AM</item>
+        <item>2:00 AM</item>
+        <item>2:30 AM</item>
+        <item>3:00 AM</item>
+        <item>3:30 AM</item>
+        <item>4:00 AM</item>
+        <item>4:30 AM</item>
+    </string-array>
+
+
 </resources>
