@@ -20,19 +20,29 @@ import android.widget.Toast;
 import android.text.TextUtils;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Register extends AppCompatActivity {
 
-    EditText editTextEmail, editTextPassword, editTextHeight, editTextWeight, editTextAge;
+    EditText editTextFirstName, editTextLastName, editTextEmail, editTextPassword, editTextHeight, editTextWeight, editTextAge;
     Spinner spinnerSex, spinnerPreferredGymTime;
     Button buttonRegister;
     ProgressBar registerProgressBar;
     TextView toLogin;
     FirebaseAuth mAuth;
+    FirebaseFirestore firestore;
+    String userID;
 
     @Override
     public void onStart() {
@@ -49,7 +59,12 @@ public class Register extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
         mAuth = FirebaseAuth.getInstance();
+        firestore = FirebaseFirestore.getInstance();
+
+        editTextFirstName = findViewById(R.id.register_first_name_input);
+        editTextLastName = findViewById(R.id.register_last_name_input);
         editTextEmail = findViewById(R.id.register_email_input);
         editTextPassword = findViewById(R.id.register_password_input);
         editTextHeight = findViewById(R.id.register_height_input);
@@ -71,7 +86,9 @@ public class Register extends AppCompatActivity {
         buttonRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view){
-                String email, password, height, weight, sex, age, preferredGymTime;
+                String firstName, lastName, email, password, height, weight, sex, age, preferredGymTime;
+                firstName = String.valueOf(editTextFirstName.getText());
+                lastName = String.valueOf(editTextLastName.getText());
                 email = String.valueOf(editTextEmail.getText());
                 password = String.valueOf(editTextPassword.getText());
                 height = String.valueOf(editTextHeight.getText());
@@ -79,6 +96,16 @@ public class Register extends AppCompatActivity {
                 sex = spinnerSex.getSelectedItem().toString();
                 age = String.valueOf(editTextAge.getText());
                 preferredGymTime = spinnerPreferredGymTime.getSelectedItem().toString();
+
+                if (TextUtils.isEmpty(firstName)){
+                    Toast.makeText(Register.this, "Please enter your first name.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (TextUtils.isEmpty(lastName)){
+                    Toast.makeText(Register.this, "Please enter your last name.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 if (TextUtils.isEmpty(email)){
                     Toast.makeText(Register.this, "Please enter your email address.", Toast.LENGTH_SHORT).show();
@@ -120,6 +147,25 @@ public class Register extends AppCompatActivity {
                                 if (task.isSuccessful()) {
                                     Toast.makeText(Register.this, "Account Registration Successful.",
                                             Toast.LENGTH_SHORT).show();
+
+                                    userID = mAuth.getCurrentUser().getUid();
+                                    DocumentReference documentReference = firestore.collection("users").document(userID);
+                                    Map<String,Object> user = new HashMap<>();
+                                    user.put("firstName", firstName);
+                                    user.put("lastName", lastName);
+                                    user.put("email", email);
+                                    user.put("height", Integer.parseInt(height));
+                                    user.put("weight", Integer.parseInt(weight));
+                                    user.put("sex", sex);
+                                    user.put("age", age);
+                                    user.put("preferredGymTime", preferredGymTime);
+                                    Integer[] emptyArray = {0,0,0,0,0,0,0,0,0,0};
+                                    List<Integer> emptyHistory = Arrays.asList(emptyArray);
+                                    user.put("sleepHistory", emptyHistory);
+                                    user.put("hydrationHistory", emptyHistory);
+                                    user.put("exerciseHistory", emptyHistory);
+                                    documentReference.set(user);
+
                                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                     startActivity(intent);
                                     finish();

@@ -8,7 +8,7 @@
     <string name="login_account_registration">Account Registration</string>
 
     <string name="register">Register</string>
-    <string name="register_intro">User Registration</string>
+    <string name="register_intro">Account Registration</string>
     <string name="register_return_to_login">Return to login</string>
 
     <string name="title_home">Home</string>
@@ -34,6 +34,8 @@
     <string name="insights_exercise">Exercise:</string>
 
     <string name="profile_intro">Displaying Profile for %1$s:</string>
+    <string name="profile_first_name">First Name:</string>
+    <string name="profile_last_name">Last Name:</string>
     <string name="profile_email">Email:</string>
     <string name="profile_password">Password:</string>
     <string name="profile_height">Height (Inches):</string>
