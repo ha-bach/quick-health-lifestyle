@@ -122,21 +122,21 @@
         app:layout_constraintStart_toStartOf="@+id/profile_bubble"
         app:layout_constraintTop_toBottomOf="@+id/profile_last_name_input" />
 
-    <EditText
-        android:id="@+id/profile_username_input"
+    <TextView
+        android:id="@+id/profile_email_sample"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:background="@drawable/rounded_rectangle2"
-        android:inputType="text"
         android:maxLength="254"
         android:paddingStart="10dp"
+        android:text="@string/profile_email_sample"
         android:textColor="#000000"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="@+id/profile_bubble"
         app:layout_constraintHorizontal_bias="0.177"
         app:layout_constraintStart_toStartOf="@+id/profile_bubble"
         app:layout_constraintTop_toBottomOf="@+id/profile_email"
-        tools:ignore="Autofill,RtlSymmetry" />
+        tools:ignore="Autofill,LabelFor,RtlSymmetry" />
 
     <TextView
         android:id="@+id/profile_password"
@@ -149,16 +149,16 @@
         android:textColor="#000000"
         android:textSize="17sp"
         app:layout_constraintStart_toStartOf="@+id/profile_bubble"
-        app:layout_constraintTop_toBottomOf="@+id/profile_username_input" />
+        app:layout_constraintTop_toBottomOf="@+id/profile_email_sample" />
 
-    <EditText
-        android:id="@+id/profile_password_input"
+    <TextView
+        android:id="@+id/profile_password_sample"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:background="@drawable/rounded_rectangle2"
-        android:inputType="textPassword"
         android:maxLength="20"
         android:paddingStart="10dp"
+        android:text="@string/profile_password_sample"
         android:textColor="#000000"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="@+id/profile_bubble"
@@ -178,7 +178,7 @@
         android:textColor="#000000"
         android:textSize="17sp"
         app:layout_constraintStart_toStartOf="@+id/profile_bubble"
-        app:layout_constraintTop_toBottomOf="@+id/profile_password_input" />
+        app:layout_constraintTop_toBottomOf="@+id/profile_password_sample" />
 
     <EditText
         android:id="@+id/profile_height_input"
@@ -309,13 +309,35 @@
         app:layout_constraintTop_toBottomOf="@+id/profile_preferred_gym_time" />
 
     <Button
+        android:id="@+id/profile_update_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="424dp"
+        android:text="@string/profile_update"
+        app:layout_constraintEnd_toEndOf="@+id/profile_bubble"
+        app:layout_constraintHorizontal_bias="0.898"
+        app:layout_constraintStart_toStartOf="@+id/profile_bubble"
+        app:layout_constraintTop_toTopOf="@+id/profile_bubble" />
+
+    <Button
         android:id="@+id/profile_logout_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="246dp"
+        android:layout_marginTop="8dp"
         android:text="@string/profile_logout"
         app:layout_constraintEnd_toEndOf="@+id/profile_bubble"
-        app:layout_constraintHorizontal_bias="0.895"
+        app:layout_constraintHorizontal_bias="0.898"
+        app:layout_constraintStart_toStartOf="@+id/profile_bubble"
+        app:layout_constraintTop_toBottomOf="@+id/profile_update_button" />
+
+    <ProgressBar
+        android:id="@+id/profile_progress_bar"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="256dp"
+        app:layout_constraintEnd_toEndOf="@+id/profile_bubble"
+        app:layout_constraintHorizontal_bias="0.843"
         app:layout_constraintStart_toStartOf="@+id/profile_bubble"
         app:layout_constraintTop_toTopOf="@+id/profile_bubble" />
 

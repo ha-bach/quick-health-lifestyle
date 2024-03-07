@@ -41,11 +41,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="68dp"
         android:labelFor="@+id/profile_username_input"
-        android:text="@string/profile_email"
+        android:text="@string/login_email_address"
         android:textColor="#000000"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.297"
+        app:layout_constraintHorizontal_bias="0.382"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/login_title_bubble" />
 
@@ -70,11 +70,11 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:labelFor="@+id/profile_password_input"
-        android:text="@string/profile_password"
+        android:text="@string/login_password"
         android:textColor="#000000"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.347"
+        app:layout_constraintHorizontal_bias="0.334"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/login_email_input" />
 

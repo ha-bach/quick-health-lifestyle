@@ -40,14 +40,14 @@ public class Register extends AppCompatActivity {
     Button buttonRegister;
     ProgressBar registerProgressBar;
     TextView toLogin;
-    FirebaseAuth mAuth;
+    FirebaseAuth auth;
     FirebaseFirestore firestore;
     String userID;
 
     @Override
     public void onStart() {
         super.onStart();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        FirebaseUser currentUser = auth.getCurrentUser();
         if(currentUser != null){
             Intent intent = new Intent(getApplicationContext(), MainActivity.class);
             startActivity(intent);
@@ -60,7 +60,7 @@ public class Register extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        mAuth = FirebaseAuth.getInstance();
+        auth = FirebaseAuth.getInstance();
         firestore = FirebaseFirestore.getInstance();
 
         editTextFirstName = findViewById(R.id.register_first_name_input);
@@ -139,7 +139,7 @@ public class Register extends AppCompatActivity {
 
                 registerProgressBar.setVisibility(View.VISIBLE);
 
-                mAuth.createUserWithEmailAndPassword(email, password)
+                auth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -148,16 +148,15 @@ public class Register extends AppCompatActivity {
                                     Toast.makeText(Register.this, "Account Registration Successful.",
                                             Toast.LENGTH_SHORT).show();
 
-                                    userID = mAuth.getCurrentUser().getUid();
+                                    userID = auth.getCurrentUser().getUid();
                                     DocumentReference documentReference = firestore.collection("users").document(userID);
                                     Map<String,Object> user = new HashMap<>();
                                     user.put("firstName", firstName);
                                     user.put("lastName", lastName);
-                                    user.put("email", email);
                                     user.put("height", Integer.parseInt(height));
                                     user.put("weight", Integer.parseInt(weight));
                                     user.put("sex", sex);
-                                    user.put("age", age);
+                                    user.put("age", Integer.parseInt(age));
                                     user.put("preferredGymTime", preferredGymTime);
                                     Integer[] emptyArray = {0,0,0,0,0,0,0,0,0,0};
                                     List<Integer> emptyHistory = Arrays.asList(emptyArray);
