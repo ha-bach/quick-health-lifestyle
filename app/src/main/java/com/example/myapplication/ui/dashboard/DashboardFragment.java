@@ -8,11 +8,19 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+
+import com.example.myapplication.R;
 import com.example.myapplication.databinding.FragmentDashboardBinding;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class DashboardFragment extends Fragment {
 
 private FragmentDashboardBinding binding;
+
+    FirebaseAuth auth;
+    TextView insightsTitle;
+    FirebaseUser user;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
             ViewGroup container, Bundle savedInstanceState) {
@@ -21,6 +29,14 @@ private FragmentDashboardBinding binding;
 
     binding = FragmentDashboardBinding.inflate(inflater, container, false);
     View root = binding.getRoot();
+
+    insightsTitle = binding.insightsWelcome;
+    auth = FirebaseAuth.getInstance();
+    user = auth.getCurrentUser();
+    if(user != null)
+    {
+        insightsTitle.setText(getString(R.string.insights_intro, user.getEmail().split("@")[0]));
+    }
 
         final TextView textView = binding.textDashboard;
         dashboardViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);

@@ -1,6 +1,11 @@
 package com.example.myapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
@@ -13,6 +18,8 @@ import androidx.work.WorkManager;
 
 import com.example.myapplication.databinding.ActivityMainBinding;
 import com.example.myapplication.workers.TemperatureHumidityWorker;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.concurrent.TimeUnit;
 
@@ -20,10 +27,24 @@ public class MainActivity extends AppCompatActivity {
 
 private ActivityMainBinding binding;
 
-    //FirebaseFirestore firestore; //Testing firebase instance uncomment for testing
+    FirebaseAuth auth;
+    FirebaseUser user;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
+        if (user == null) {
+            Intent intent = new Intent(getApplicationContext(), Login.class);
+            startActivity(intent);
+            finish();
+        }
+
+        //FirebaseFirestore firestore; //Testing firebase instance uncomment for testing
         //Testing Firestore: if you want to test it, uncomment this below
 //        firestore = FirebaseFirestore.getInstance();
 //        Map<String, Object> userProfile = new HashMap<>();
@@ -42,8 +63,7 @@ private ActivityMainBinding binding;
 //                Toast.makeText(getApplicationContext(), "Failure", Toast.LENGTH_LONG).show();
 //            }
 //        });
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each

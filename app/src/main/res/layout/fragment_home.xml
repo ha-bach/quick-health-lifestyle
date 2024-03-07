@@ -22,13 +22,18 @@
 
     <TextView
         android:id="@+id/home_welcome"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="390dp"
+        android:layout_height="40dp"
         android:layout_marginTop="0dp"
-        android:text="@string/home_welcome"
+        android:text="@string/home_intro"
         android:textColor="#000000"
+        android:gravity="center"
         android:textSize="30sp"
         android:textStyle="bold"
+        app:autoSizeTextType="uniform"
+        app:autoSizeMinTextSize="12sp"
+        app:autoSizeMaxTextSize="100sp"
+        app:autoSizeStepGranularity="2sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.024"
         app:layout_constraintStart_toStartOf="parent"
@@ -38,13 +43,13 @@
         android:id="@+id/home_sleep_bubble"
         android:layout_width="380dp"
         android:layout_height="185dp"
-        android:layout_marginTop="50dp"
-        android:src="@drawable/rounded_rectangle"
+        android:layout_marginTop="6dp"
         android:contentDescription="@null"
+        android:src="@drawable/rounded_rectangle"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.516"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/home_welcome" />
 
     <TextView
         android:id="@+id/home_sleep"

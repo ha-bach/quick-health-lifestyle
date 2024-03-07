@@ -1,11 +1,21 @@
 <resources>
     <string name="app_name">QuickHealthLifestyle</string>
+    <string name="app_name_spaces">Quick Health Lifestyle</string>
+
+    <string name="login">Login</string>
+    <string name="login_email_address">Email Address</string>
+    <string name="login_password">Password</string>
+    <string name="login_account_registration">Account Registration</string>
+
+    <string name="register">Register</string>
+    <string name="register_intro">User Registration</string>
+    <string name="register_return_to_login">Return to login</string>
 
     <string name="title_home">Home</string>
     <string name="title_insights">Insights</string>
     <string name="title_profile">Profile</string>
 
-    <string name="home_welcome">Welcome, User!</string>
+    <string name="home_intro">Welcome, %1$s!</string>
     <string name="home_recommended_sleep">Recommended Sleep:</string>
     <string name="home_target_hours">Target Hours:</string>
     <string name="home_recommended_hydration">Recommended Hydration:</string>
@@ -18,13 +28,13 @@
     <string name="home_placeholder_status2">Incomplete</string>
     <string name="home_placeholder_rec3">60 minutes daily</string>
 
-    <string name="insights_intro">Displaying Insights of User:</string>
+    <string name="insights_intro">Displaying Insights of %1$s:</string>
     <string name="insights_sleep">Sleep:</string>
     <string name="insights_hydration">Hydration:</string>
     <string name="insights_exercise">Exercise:</string>
 
-    <string name="profile_intro">Displaying Profile for User:</string>
-    <string name="profile_username">Username:</string>
+    <string name="profile_intro">Displaying Profile for %1$s:</string>
+    <string name="profile_email">Email:</string>
     <string name="profile_password">Password:</string>
     <string name="profile_height">Height (Inches):</string>
     <string name="profile_weight">Weight (Pounds):</string>
@@ -85,6 +95,7 @@
         <item>4:00 AM</item>
         <item>4:30 AM</item>
     </string-array>
+    <string name="profile_logout">Logout</string>
 
 
 </resources>
