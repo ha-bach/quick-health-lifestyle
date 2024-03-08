@@ -11,11 +11,6 @@ import androidx.annotation.Nullable;
 public class HydrationService extends Service {
 
     private final IBinder binder = new HydrationBinder();
-    private static final double BASE_INTAKE = 2500;
-    private static final double MALE_INTAKE_FACTOR = 1.1;
-    private static final double FEMALE_INTAKE_FACTOR = 1.0;
-    private static final double HUMIDITY_INTAKE_FACTOR = 0.05;
-    private static final double TEMPERATURE_INTAKE_FACTOR = 0.1;
 
 
     public class HydrationBinder extends Binder {
@@ -30,37 +25,45 @@ public class HydrationService extends Service {
     }
 
     public double getHydrationRecommendation() {
-        // TODO: replace with Firebase code
+        // based on metric units.
         double age = 35;
-        String sex = "female";
-        double weight = 65;
-        double temperature = 25;
-        double humidity = 40;
+        String sex = "male";
+        double weight = 65; // kg
+        double temperature = 25; // Celsius
+        double humidity = 40; // percent
 
-        double intake;
-        double ageFactor = 1.0 + (age - 18) * 0.02; // Adjusted by 2% per year after 18
-        intake = BASE_INTAKE * ageFactor;
+        double personalIntake = getPersonalIntake(age, sex, weight);
+        double contextualIntake = getContextualIntake(temperature, humidity);
 
-        if (sex.equalsIgnoreCase("male")) {
-            intake *= MALE_INTAKE_FACTOR;
-        } else if (sex.equalsIgnoreCase("female")) {
-            intake *= FEMALE_INTAKE_FACTOR;
-        }
-
-        intake += BASE_INTAKE * HUMIDITY_INTAKE_FACTOR * (humidity / 100);
-
-        intake += BASE_INTAKE * TEMPERATURE_INTAKE_FACTOR * ((temperature - 25) / 10);
-
-        double weightFactor = 1.0 + (weight - 70) * 0.02;
-        intake += weight * 30 * weightFactor;
-
-        return intake;
+        return personalIntake + contextualIntake;
     }
-
 
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return binder;
+    }
+
+    double getPersonalIntake(double age, String sex, double weight) {
+        double intakePerKg = 35;
+        double personalIntakeFactor = 1;
+        if(age <= 18) {
+            if(age == 0) personalIntakeFactor += 1;
+            else personalIntakeFactor += 1/age;
+        }
+        else if(age < 60) {
+            if(sex.equalsIgnoreCase("male"))    personalIntakeFactor += 0.5;
+        }
+        else {
+            personalIntakeFactor -= 0.1;
+            if(sex.equalsIgnoreCase("male")) personalIntakeFactor += 0.5;
+        }
+        return intakePerKg * personalIntakeFactor * weight;
+    }
+
+    double getContextualIntake(double humidity, double temperature) {
+        double humidityIntake = ((humidity - 60) / 40) * 500;
+        double temperatureIntake = (temperature - 30) * 50;
+        return humidityIntake + temperatureIntake;
     }
 }
