@@ -4,14 +4,12 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.IBinder;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 
 public class HydrationService extends Service {
 
     private final IBinder binder = new HydrationBinder();
-
 
     public class HydrationBinder extends Binder {
         public HydrationService getService() {
@@ -21,7 +19,6 @@ public class HydrationService extends Service {
 
     public void onCreate() {
         super.onCreate();
-        // add Firebase listener code here: https://chat.openai.com/c/4332d77b-c237-423d-b014-803f7dd99f35
     }
 
     public double getHydrationRecommendation() {
