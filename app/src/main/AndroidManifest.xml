@@ -24,7 +24,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <receiver
+            android:name="com.example.myapplication.sleep.SleepSegmentReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.android.gms.location.SleepSegment.ACTION_SEGMENT_EVENT"/>
+            </intent-filter>
+        </receiver>
+
     </application>
+
 
 </manifest>
 

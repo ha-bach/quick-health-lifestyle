@@ -1,5 +1,6 @@
 package com.example.myapplication.sleep;
 
+import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -9,16 +10,17 @@ import androidx.annotation.NonNull;
 
 import com.google.android.gms.location.ActivityRecognition;
 import com.google.android.gms.location.ActivityRecognitionClient;
+import com.google.android.gms.location.SleepSegmentRequest;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
 public class SleepAPIDetection {
     // SleepDetectionService.java
-    private Context context;
+    private final Context context;
     private static final String TAG = "SleepAPIDetection";
 
-    private ActivityRecognitionClient activityRecognitionClient;
+    private final ActivityRecognitionClient activityRecognitionClient;
     private static final long DETECTION_INTERVAL_IN_MILLISECONDS = 10*60*1000;
 
     public SleepAPIDetection(Context context) {
@@ -28,9 +30,9 @@ public class SleepAPIDetection {
 
         public void subscribeToSleepUpdates() {
             Log.d(TAG, "subscribeToSleepUpdates: ");
-            Task<Void> task = activityRecognitionClient.requestActivityUpdates(
-                    DETECTION_INTERVAL_IN_MILLISECONDS,
-                    getPendingIntent());
+            @SuppressLint("MissingPermission") Task<Void> task = activityRecognitionClient.requestSleepSegmentUpdates(
+                    getPendingIntent(),
+                    SleepSegmentRequest.getDefaultSleepSegmentRequest());
 
             task.addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
