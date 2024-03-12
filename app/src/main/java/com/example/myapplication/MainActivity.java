@@ -8,7 +8,6 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.TextView;
 
 import com.example.myapplication.services.HydrationService;
 import com.example.myapplication.workers.LocationWorker;
@@ -18,19 +17,15 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.lifecycle.Observer;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.work.Data;
 import androidx.work.PeriodicWorkRequest;
-import androidx.work.WorkInfo;
 import androidx.work.WorkManager;
 
 import com.example.myapplication.databinding.ActivityMainBinding;
 
-import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import android.Manifest;
 
@@ -80,6 +75,9 @@ private ActivityMainBinding binding;
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE_LOCATION);
         }
+        else {
+            getLocationUpdates();
+        }
     }
 
     @Override
@@ -121,30 +119,8 @@ private ActivityMainBinding binding;
         long repeatIntervalMinutes = 15;
         PeriodicWorkRequest locationWorkRequest = new PeriodicWorkRequest.Builder(LocationWorker.class, repeatIntervalMinutes, TimeUnit.MINUTES)
                 .build();
-
         WorkManager.getInstance(getApplicationContext())
                 .enqueue(locationWorkRequest);
-
-        WorkManager.getInstance(getApplicationContext()).getWorkInfoByIdLiveData(locationWorkRequest.getId()).observeForever(new Observer<WorkInfo>() {
-            @Override
-            public void onChanged(WorkInfo workInfo) {
-                if (workInfo != null && workInfo.getState() == WorkInfo.State.SUCCEEDED) {
-                    Data outputData = workInfo.getOutputData();
-                    double latitude = outputData.getDouble("latitude", 0.0);
-                    double longitude = outputData.getDouble("longitude", 0.0);
-                    long timestamp = outputData.getLong("timestamp", 0);
-                    double timestampSeconds = timestamp / 1000.0;
-                    Log.d("MainActivity", "Location data received: " + latitude + ", " + longitude);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            TextView textView = findViewById(R.id.text_home);
-                            textView.setText(String.format(Locale.US, "%.2f longitude, %.2f latitude, %.2f seconds", longitude, latitude, timestampSeconds));
-                        }
-                    });
-                }
-            }
-        });
     }
 
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -152,9 +128,10 @@ private ActivityMainBinding binding;
 
         if (requestCode == REQUEST_CODE_LOCATION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getLocationUpdates();
-            } else {
                 Log.d("MainActivity", "Location permission denied.");
+            }
+            else {
+                getLocationUpdates();
             }
         }
     }
