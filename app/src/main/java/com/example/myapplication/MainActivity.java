@@ -11,12 +11,11 @@ import android.util.Log;
 
 import com.example.myapplication.services.HydrationService;
 import com.example.myapplication.workers.LocationWorker;
+import com.example.myapplication.workers.WeatherWorker;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -27,7 +26,6 @@ import androidx.work.WorkManager;
 import com.example.myapplication.databinding.ActivityMainBinding;
 
 import java.util.concurrent.TimeUnit;
-import android.Manifest;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -72,12 +70,13 @@ private ActivityMainBinding binding;
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE_LOCATION);
-        }
-        else {
-            getLocationUpdates();
-        }
+//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE_LOCATION);
+//        }
+//        else
+//          start
+
+        startWeatherWorker();
     }
 
     @Override
@@ -115,25 +114,33 @@ private ActivityMainBinding binding;
         }
     };
 
-    void getLocationUpdates() {
-        long repeatIntervalMinutes = 15;
-        PeriodicWorkRequest locationWorkRequest = new PeriodicWorkRequest.Builder(LocationWorker.class, repeatIntervalMinutes, TimeUnit.MINUTES)
+//    void getLocationUpdates() {
+//        long repeatIntervalMinutes = 15;
+//        PeriodicWorkRequest locationWorkRequest = new PeriodicWorkRequest.Builder(LocationWorker.class, repeatIntervalMinutes, TimeUnit.MINUTES)
+//                .build();
+//        WorkManager.getInstance(getApplicationContext())
+//                .enqueue(locationWorkRequest);
+//    }
+//
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//
+//        if (requestCode == REQUEST_CODE_LOCATION) {
+//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                Log.d("MainActivity", "Location permission denied.");
+//            }
+//            else {
+//                getLocationUpdates();
+//            }
+//        }
+//    }
+
+    public void startWeatherWorker() {
+        long repeatIntervalHours = 4;
+        PeriodicWorkRequest weatherWorkRequest = new PeriodicWorkRequest.Builder(WeatherWorker.class, repeatIntervalHours, TimeUnit.HOURS)
                 .build();
         WorkManager.getInstance(getApplicationContext())
-                .enqueue(locationWorkRequest);
-    }
-
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == REQUEST_CODE_LOCATION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Log.d("MainActivity", "Location permission denied.");
-            }
-            else {
-                getLocationUpdates();
-            }
-        }
+                .enqueue(weatherWorkRequest);
     }
 }
 
