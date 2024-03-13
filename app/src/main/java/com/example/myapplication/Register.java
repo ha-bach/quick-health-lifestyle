@@ -163,6 +163,8 @@ public class Register extends AppCompatActivity {
                                     user.put("sleepHistory", emptyHistory);
                                     user.put("hydrationHistory", emptyHistory);
                                     user.put("exerciseHistory", emptyHistory);
+                                    user.put("exercisedToday", false);
+                                    user.put("hydratedToday", false);
                                     documentReference.set(user);
 
                                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
