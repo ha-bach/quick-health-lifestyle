@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools" >
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -13,22 +13,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication"
-        tools:targetApi="31">
+        tools:targetApi="31" >
         <activity
-            android:name=".Register"
-            android:exported="false" />
-        <activity
-            android:name=".Login"
-            android:exported="true">
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name=".MainActivity"
-            android:exported="true">
         </activity>
         <receiver
             android:name="com.example.myapplication.sleep.SleepSegmentReceiver"
@@ -37,6 +31,7 @@
                 <action android:name="com.google.android.gms.location.SleepSegment.ACTION_SEGMENT_EVENT"/>
             </intent-filter>
         </receiver>
+
     </application>
 
 
