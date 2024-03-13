@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.example.myapplication.services.HydrationService;
 import com.example.myapplication.workers.LocationWorker;
@@ -25,6 +26,8 @@ import androidx.work.WorkManager;
 
 import com.example.myapplication.databinding.ActivityMainBinding;
 
+import java.util.Locale;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
@@ -104,8 +107,14 @@ private ActivityMainBinding binding;
             HydrationService.HydrationBinder hydrationBinder = (HydrationService.HydrationBinder) service;
             hydrationService = hydrationBinder.getService();
             hydrationBound = true;
-//            TextView textView = findViewById(R.id.text_home);
-//            textView.setText(String.format(Locale.US, "%.2f",hydrationService.getHydrationRecommendation()));
+
+            CompletableFuture<Double> future = hydrationService.getHydrationRecommendationAsync();
+            future.thenAccept(totalIntake -> {
+                runOnUiThread(() -> {
+                    TextView textView = findViewById(R.id.text_home);
+                    textView.setText(String.format(Locale.US, "%.2f", totalIntake));
+                });
+            });
         }
 
         @Override

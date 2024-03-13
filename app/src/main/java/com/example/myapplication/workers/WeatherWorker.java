@@ -5,7 +5,6 @@ import android.location.Location;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.OptIn;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
@@ -13,7 +12,12 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.Map;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -21,16 +25,9 @@ import com.google.firebase.firestore.Query;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
-import javax.net.ssl.HttpsURLConnection;
-
-import kotlinx.coroutines.DelicateCoroutinesApi;
-import kotlinx.coroutines.GlobalScope;
-
 public class WeatherWorker extends Worker {
 
     private static final String TAG = "WeatherWorker";
-
-    Location location;
 
     public WeatherWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
@@ -53,6 +50,7 @@ public class WeatherWorker extends Worker {
                             Location location = new Location("gps");
                             location.setLatitude(documentSnapshot.getDouble("latitude"));
                             location.setLongitude(documentSnapshot.getDouble("longitude"));
+                            location.setTime(documentSnapshot.getLong("time"));
                             Log.d(TAG, "Location retrieved: " + location.getLatitude() + ", " + location.getLongitude());
                             getWeatherData(location);
                         } else {
@@ -63,7 +61,7 @@ public class WeatherWorker extends Worker {
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Log.d(TAG, "Failed to retrieve location from Firestore: " + e.getMessage());
+                    Log.d(TAG, "Failed to retrieve weather from Firestore: " + e.getMessage());
                 });
 
         return Result.success();
@@ -101,11 +99,31 @@ public class WeatherWorker extends Worker {
 
                     FirebaseFirestore firestore = FirebaseFirestore.getInstance();
                     String userId = "YnfZYzNM1OqMnXgqyA6D";  // Replace with the actual user ID
-                    CollectionReference weatherRef = firestore.collection("users")
+                    CollectionReference docRef = firestore.collection("users")
                             .document(userId)
                             .collection("weatherData");
 
-                    // TODO: push weather data to Firebase
+                    SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+                    String docId = formatter.format(location.getTime());
+                    Map<String, Object> locationPost = new HashMap<>();
+                    locationPost.put("humidity", humidity);
+                    locationPost.put("temperature", temp);
+                    locationPost.put("time", location.getTime());
+
+                    docRef.document(docId)
+                            .set(locationPost)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Log.d(TAG, "Weather data pushed to Firestore with ID: " + docId);
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.w(TAG, "Weather pushing location data to Firestore", e);
+                                }
+                            });
 
                 } else {
                     Log.e(TAG, "HTTP response code: " + responseCode);
