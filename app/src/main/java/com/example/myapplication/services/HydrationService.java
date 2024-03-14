@@ -61,6 +61,7 @@ public class HydrationService extends Service {
                         if (documentSnapshot.exists()) {
                             double temperature = documentSnapshot.getDouble("temperature");
                             double humidity = documentSnapshot.getDouble("humidity");
+                            Log.d(TAG, "Temperature: " + temperature + ". Humidity: " + humidity);
                             double contextualIntake = getWeatherIntake(temperature, humidity);
                             Log.d(TAG, "Contextual intake calculated: " + contextualIntake);
                             future.complete(contextualIntake);
@@ -136,8 +137,15 @@ public class HydrationService extends Service {
     }
 
     double getWeatherIntake(double humidity, double temperature) {
-        double humidityIntake = ((humidity - 60) / 40) * 500;
-        double temperatureIntake = (temperature - 30) * 50;
+        // add intake if too hot or humid
+        double humidityIntake = ((humidity - 30) / 40) * 500;
+        if (humidityIntake < 0) {
+            humidityIntake = 0;
+        }
+        double temperatureIntake = (temperature - 20) * 50;
+        if (temperatureIntake < 0) {
+            temperatureIntake = 0;
+        }
         return humidityIntake + temperatureIntake;
     }
 }
