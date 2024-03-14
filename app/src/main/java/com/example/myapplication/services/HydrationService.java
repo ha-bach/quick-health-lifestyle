@@ -1,14 +1,27 @@
 package com.example.myapplication.services;
 
+import android.annotation.SuppressLint;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.RemoteViews;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
+import com.example.myapplication.R;
+import com.example.myapplication.ui.notifications.HydrationNotifActivity;
+import com.example.myapplication.ui.notifications.HydrationNotificationReceiver;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -43,6 +56,7 @@ public class HydrationService extends Service {
     public CompletableFuture<Double> getHydrationRecommendation() {
         CompletableFuture<Double> contextualIntake = getContextualIntake();
         CompletableFuture<Double> personalIntake = getPersonalIntake();
+        showNotification();
         return contextualIntake.thenCombine(personalIntake, (contextual, personal) -> (contextual + personal) / 236.588); // convert from mL to cups
     }
 
@@ -147,5 +161,32 @@ public class HydrationService extends Service {
             temperatureIntake = 0;
         }
         return humidityIntake + temperatureIntake;
+    }
+
+    @SuppressLint("MissingPermission")
+    private void showNotification() {
+        String channelId = "HYDRATION_NOTIFICATION";
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId);
+        builder.setSmallIcon(R.drawable.baseline_notifications)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.hydration_notification);
+        remoteViews.setTextViewText(R.id.notification_title, "Quick Health Lifestyle");
+        remoteViews.setTextViewText(R.id.notification_message, "Have you drank today's recommended water intake?");
+
+        Intent button1Intent = new Intent(this, HydrationNotificationReceiver.class);
+        button1Intent.setAction("BUTTON_1_ACTION");
+        PendingIntent button1PendingIntent = PendingIntent.getBroadcast(this, 0, button1Intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        remoteViews.setOnClickPendingIntent(R.id.yes_button, button1PendingIntent);
+
+        Intent button2Intent = new Intent(this, HydrationNotificationReceiver.class);
+        button2Intent.setAction("BUTTON_2_ACTION");
+        PendingIntent button2PendingIntent = PendingIntent.getBroadcast(this, 0, button2Intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        remoteViews.setOnClickPendingIntent(R.id.no_button, button2PendingIntent);
+
+        builder.setCustomContentView(remoteViews);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        notificationManager.notify(1, builder.build());
     }
 }
