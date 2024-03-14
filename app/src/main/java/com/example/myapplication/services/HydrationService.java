@@ -43,7 +43,7 @@ public class HydrationService extends Service {
     public CompletableFuture<Double> getHydrationRecommendation() {
         CompletableFuture<Double> contextualIntake = getContextualIntake();
         CompletableFuture<Double> personalIntake = getPersonalIntake();
-        return contextualIntake.thenCombine(personalIntake, (contextual, personal) -> contextual + personal);
+        return contextualIntake.thenCombine(personalIntake, (contextual, personal) -> (contextual + personal) / 236.588); // convert from mL to cups
     }
 
     public CompletableFuture<Double> getContextualIntake() {

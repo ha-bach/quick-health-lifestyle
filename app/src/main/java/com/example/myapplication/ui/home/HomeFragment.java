@@ -95,14 +95,10 @@ private FragmentHomeBinding binding;
             hydrationService = hydrationBinder.getService();
             hydrationBound = true;
 
-            //        double hydrationRec = 10;
-//        String formattedText = String.format(Locale.getDefault(), "%.2f mL", hydrationRec);
-//        binding.homePlaceholder3.setText(formattedText);
-
             CompletableFuture<Double> hydrationRecommendation = hydrationService.getHydrationRecommendation();
             hydrationRecommendation.thenAccept(totalIntake -> {
                 requireActivity().runOnUiThread(() -> {
-                    String formattedText = String.format(Locale.getDefault(), "%.0f mL", totalIntake);
+                    String formattedText = String.format(Locale.getDefault(), "%.0f cups", totalIntake);
                     binding.hydrationRecommendationValue.setText(formattedText);
                 });
             });
