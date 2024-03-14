@@ -5,6 +5,7 @@ plugins {
 }
 
 android {
+
     namespace = "com.example.myapplication"
     compileSdk = 34
 
@@ -16,7 +17,10 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
     }
+
+
 
     buildTypes {
         release {
@@ -59,4 +63,8 @@ dependencies {
     implementation("com.google.android.gms:play-services-maps:18.2.0")
     implementation("com.google.android.libraries.places:places:3.3.0")
     implementation ("com.squareup.okhttp3:okhttp:4.9.0")
+    implementation ("org.tensorflow:tensorflow-lite:2.5.0")
+
+
 }
+

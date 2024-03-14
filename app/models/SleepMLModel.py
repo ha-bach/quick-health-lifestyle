@@ -10,7 +10,7 @@ data = pd.read_csv(
     "C:\\Users\\idhan\\cs125project\\Quick-Health-Lifestyle\\app\\data\\sleep_dataset.csv"
 )
 
-X = data[["sleepTime", "sleepDuration", "id"]]
+X = data[["sleepTime", "id"]]
 y = data["wakeupTime"]
 
 # Split data into train and test sets
@@ -26,8 +26,8 @@ gbm.fit(X_train, y_train)
 y_pred = gbm.predict(X_test)
 
 # Evaluate the model
-# mse = mean_squared_error(y_test, y_pred)
-# print("Mean Squared Error:", mse)
+mse = mean_squared_error(y_test, y_pred)
+print("Mean Squared Error:", mse)
 
 
 # Save the trained model
