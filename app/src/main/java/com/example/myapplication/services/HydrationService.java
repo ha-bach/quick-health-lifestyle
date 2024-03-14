@@ -114,18 +114,18 @@ public class HydrationService extends Service {
     }
 
     private double calculatePersonalIntake(double age, String sex, double weight) {
-        double intakePerKg = 35;
+        double intakePerKg = 40;
         double personalIntakeFactor = 1;
         if(age <= 18) {
             if(age == 0) personalIntakeFactor += 1;
             else personalIntakeFactor += 1/age;
         }
         else if(age < 60) {
-            if(sex.equalsIgnoreCase("male"))    personalIntakeFactor += 0.5;
+            if(sex.equalsIgnoreCase("male"))    personalIntakeFactor += 0.3;
         }
         else {
             personalIntakeFactor -= 0.1;
-            if(sex.equalsIgnoreCase("male")) personalIntakeFactor += 0.5;
+            if(sex.equalsIgnoreCase("male")) personalIntakeFactor += 0.3;
         }
         return intakePerKg * personalIntakeFactor * weight;
     }
