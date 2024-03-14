@@ -58,7 +58,12 @@
                 <action android:name="NO_ACTION" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".ui.notifications.HydrationNotificationReceiver" />
+        <receiver android:name=".ui.notifications.HydrationNotificationReceiver" android:exported="false">
+            <intent-filter>
+                <action android:name="HYDRATION_YES_ACTION" />
+                <action android:name="HYDRATION_NO_ACTION" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>
