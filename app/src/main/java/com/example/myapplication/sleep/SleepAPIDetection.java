@@ -51,34 +51,27 @@ public class SleepAPIDetection {
             }
         });
 
-        // Add activity recognition subscription logic here
-        subscribeToActivityUpdates();
     }
 
-    private void subscribeToActivityUpdates() {
-        // Implement your activity recognition subscription logic here
-        // You can use ActivityRecognitionClient similar to how it's done for sleep data
-        // Don't forget to handle success and failure cases accordingly
-    }
 
     private PendingIntent getPendingIntent() {
         Intent intent = new Intent(context, SleepAPIDetection.class);
         return PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
     public void simulateSleepTrigger() {
-        // Simulate a trigger for sleep detection
+
         Intent intent = new Intent(context, SleepSegmentReceiver.class);
         intent.setAction("com.example.myapplication.sleep.ACTION_SLEEP_SEGMENT_EVENT");// TODO: Extract sleep information from PendingIntent.
         if (SleepSegmentEvent.hasEvents(intent)) {
             List<SleepSegmentEvent> sleepSegmentEvents = SleepSegmentEvent.extractEvents(intent);
             sleepdatahandler.addSleepSegmentEventsToDatabase(sleepSegmentEvents);
         } else {
-            // Handle other sleep events if needed
+
         }
 
 
 
-                    context.sendBroadcast(intent);
+        context.sendBroadcast(intent);
     }
 
 

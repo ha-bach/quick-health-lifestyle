@@ -12,19 +12,15 @@ public class SleepSegmentReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        // Handle sleep segment events here
-        // Extract sleep segment data from the intent
         if ("com.example.myapplication.sleep.ACTION_SLEEP_SEGMENT_EVENT".equals(intent.getAction())) {
             SleepSegmentEvent segmentEvent = intent.getParcelableExtra("com.example.myapplication.sleep.EXTRA_SLEEP_SEGMENT_EVENT");
 
             if (segmentEvent != null) {
-                // Access sleep segment data
                 long startTimeMillis = segmentEvent.getStartTimeMillis();
                 long endTimeMillis = segmentEvent.getEndTimeMillis();
                 int status = segmentEvent.getStatus();
                 long segmentDurationMillis = segmentEvent.getSegmentDurationMillis();
 
-                // Log the sleep segment data
                 Log.d(TAG, "Sleep Segment Data:\n" +
                         "Start Time: " + startTimeMillis + "\n" +
                         "End Time: " + endTimeMillis + "\n" +
