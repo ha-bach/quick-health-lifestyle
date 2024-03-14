@@ -2,17 +2,20 @@ package com.example.myapplication.services;
 
 import android.app.Service;
 import android.content.Intent;
-import android.location.Location;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.work.ListenableWorker;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
@@ -22,9 +25,8 @@ public class HydrationService extends Service {
 
     private final IBinder binder = new HydrationBinder();
     private final String TAG = "HydrationService";
-
-    double temperature;
-    double humidity;
+    FirebaseAuth auth;
+    FirebaseUser user;
 
     public class HydrationBinder extends Binder {
         public HydrationService getService() {
@@ -34,16 +36,22 @@ public class HydrationService extends Service {
 
     public void onCreate() {
         super.onCreate();
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
     }
 
-    public CompletableFuture<Double> getHydrationRecommendationAsync() {
+    public CompletableFuture<Double> getHydrationRecommendation() {
+        CompletableFuture<Double> contextualIntake = getContextualIntake();
+        CompletableFuture<Double> personalIntake = getPersonalIntake();
+        return contextualIntake.thenCombine(personalIntake, (contextual, personal) -> contextual + personal);
+    }
+
+    public CompletableFuture<Double> getContextualIntake() {
         CompletableFuture<Double> future = new CompletableFuture<>();
 
-        // getting contextual weather data from Firebase
-        String userId = "YnfZYzNM1OqMnXgqyA6D";
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
         CollectionReference collectionRef = firestore.collection("users")
-                .document(userId)
+                .document(user.getUid())
                 .collection("weatherData");
         Query query = collectionRef.orderBy("time", Query.Direction.DESCENDING).limit(1);
         query.get()
@@ -53,18 +61,9 @@ public class HydrationService extends Service {
                         if (documentSnapshot.exists()) {
                             double temperature = documentSnapshot.getDouble("temperature");
                             double humidity = documentSnapshot.getDouble("humidity");
-                            Log.d(TAG, "Weather data retrieved. Humidity: " + humidity + ". Temperature: " + temperature);
-
-                            double age = 35;
-                            String sex = "male";
-                            double weight = 65; // kg
-                            double personalIntake = getPersonalIntake(age, sex, weight);
-                            double contextualIntake = getContextualIntake(temperature, humidity);
-
-                            Log.d(TAG, "Intake calculated. Personal: " + personalIntake + ". Contextual: " + contextualIntake);
-
-                            double totalIntake = personalIntake + contextualIntake;
-                            future.complete(totalIntake);
+                            double contextualIntake = getWeatherIntake(temperature, humidity);
+                            Log.d(TAG, "Contextual intake calculated: " + contextualIntake);
+                            future.complete(contextualIntake);
                         } else {
                             Log.d(TAG, "Document snapshot does not exist.");
                             future.completeExceptionally(new RuntimeException("Document snapshot does not exist"));
@@ -83,13 +82,37 @@ public class HydrationService extends Service {
         return future;
     }
 
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        return binder;
+    private CompletableFuture<Double> getPersonalIntake() {
+        CompletableFuture<Double> future = new CompletableFuture<>();
+
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        DocumentReference userDocRef = firestore.collection("users").document(user.getUid());
+        userDocRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()) {
+                    double age = documentSnapshot.getDouble("age");
+                    String sex = documentSnapshot.getString("sex");
+                    double weightInLbs = documentSnapshot.getDouble("weight");
+                    double weightInKg = weightInLbs * 0.453592;
+                    double personalIntake = calculatePersonalIntake(age, sex, weightInKg);
+                    Log.d(TAG, "Personal intake calculated: " + personalIntake);
+                    future.complete(personalIntake);
+                } else {
+                    Log.d(TAG, "User document does not exist");
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.e(TAG, "Error getting user document", e);
+            }
+        });
+
+        return future;
     }
 
-    double getPersonalIntake(double age, String sex, double weight) {
+    private double calculatePersonalIntake(double age, String sex, double weight) {
         double intakePerKg = 35;
         double personalIntakeFactor = 1;
         if(age <= 18) {
@@ -106,7 +129,13 @@ public class HydrationService extends Service {
         return intakePerKg * personalIntakeFactor * weight;
     }
 
-    double getContextualIntake(double humidity, double temperature) {
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return binder;
+    }
+
+    double getWeatherIntake(double humidity, double temperature) {
         double humidityIntake = ((humidity - 60) / 40) * 500;
         double temperatureIntake = (temperature - 30) * 50;
         return humidityIntake + temperatureIntake;
