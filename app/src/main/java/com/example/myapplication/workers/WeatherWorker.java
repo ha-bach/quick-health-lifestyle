@@ -43,6 +43,7 @@ public class WeatherWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
+        if(user == null) return Result.failure();
         String userId = user.getUid();
         Log.d(TAG, "User id: " + userId);
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
@@ -106,6 +107,7 @@ public class WeatherWorker extends Worker {
                     Log.d(TAG, "Weather API called. Humidity: " + humidity + ". Temperature: " + temp);
 
                     FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+                    if(user == null)    return;
                     String userId = user.getUid();
                     CollectionReference docRef = firestore.collection("users")
                             .document(userId)

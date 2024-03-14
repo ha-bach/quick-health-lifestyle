@@ -105,6 +105,7 @@ public class LocationWorker extends Worker {
         locationPost.put("latitude", location.getLatitude());
         locationPost.put("time", location.getTime());
 
+        if(user == null)    return;
         String userId = user.getUid();
         Log.d(TAG, "User ID: " + userId);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -133,12 +134,11 @@ public class LocationWorker extends Worker {
         String apiKey = "AIzaSyAPtLBOP5-S3G7gDN0n7-ZE6MjRUioxjOc";
         String baseUrl = "https://maps.googleapis.com/maps/api/place/nearbysearch/json";
         String requestUrl = baseUrl + "?location=" + latitude + "," + longitude + "&radius=5000&type=gym&key=" + apiKey;
+        if(user == null) return;
         String userId = user.getUid();
-        Log.d(TAG, "User ID: " + userId);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("users").document(userId).get().addOnSuccessListener(documentSnapshot -> {
             if (documentSnapshot.exists() && documentSnapshot.contains("preferredGymTime")) {
-                // Assuming preferredGymTime is stored as a String
                 String preferredGymTime = documentSnapshot.getString("preferredGymTime");
                 Log.d(TAG, "Preferred Gym Time: " + preferredGymTime);
             } else {
