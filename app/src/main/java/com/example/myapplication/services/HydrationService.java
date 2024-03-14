@@ -138,11 +138,11 @@ public class HydrationService extends Service {
 
     double getWeatherIntake(double humidity, double temperature) {
         // add intake if too hot or humid
-        double humidityIntake = ((humidity - 30) / 40) * 500;
+        double humidityIntake = ((humidity - 60) / 40) * 500;
         if (humidityIntake < 0) {
             humidityIntake = 0;
         }
-        double temperatureIntake = (temperature - 20) * 50;
+        double temperatureIntake = (temperature - 30) * 50;
         if (temperatureIntake < 0) {
             temperatureIntake = 0;
         }
