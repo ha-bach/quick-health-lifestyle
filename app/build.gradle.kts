@@ -64,7 +64,7 @@ dependencies {
     implementation("com.google.android.libraries.places:places:3.3.0")
     implementation ("com.squareup.okhttp3:okhttp:4.9.0")
     implementation ("org.tensorflow:tensorflow-lite:2.5.0")
-
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 
 }
 

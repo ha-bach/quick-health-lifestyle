@@ -25,16 +25,16 @@
         android:id="@+id/insights_welcome"
         android:layout_width="390dp"
         android:layout_height="40dp"
-        android:text="@string/insights_intro"
-        android:textColor="#000000"
-        android:textAlignment="center"
         android:gravity="center"
+        android:text="@string/insights_intro"
+        android:textAlignment="center"
+        android:textColor="#000000"
         android:textSize="30sp"
         android:textStyle="bold"
-        app:autoSizeTextType="uniform"
-        app:autoSizeMinTextSize="12sp"
         app:autoSizeMaxTextSize="100sp"
+        app:autoSizeMinTextSize="12sp"
         app:autoSizeStepGranularity="2sp"
+        app:autoSizeTextType="uniform"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -69,8 +69,8 @@
         android:layout_width="380dp"
         android:layout_height="185dp"
         android:layout_marginTop="12dp"
-        android:src="@drawable/rounded_rectangle"
         android:contentDescription="@null"
+        android:src="@drawable/rounded_rectangle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -93,8 +93,8 @@
         android:layout_width="380dp"
         android:layout_height="185dp"
         android:layout_marginTop="12dp"
-        android:src="@drawable/rounded_rectangle"
         android:contentDescription="@null"
+        android:src="@drawable/rounded_rectangle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -113,39 +113,75 @@
         app:layout_constraintTop_toTopOf="@+id/insights_exercise_bubble" />
 
 
-    <ImageView
-        android:id="@+id/insights_placeholder1"
+    <TextView
+        android:id="@+id/insights_sleep_yaxis"
+        android:layout_width="125dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="52dp"
+        android:layout_marginEnd="272dp"
+        android:gravity="center"
+        android:rotation="-90"
+        android:text="@string/insights_sleep_yaxis"
+        android:textAlignment="center"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/insights_sleep_bubble"
+        app:layout_constraintTop_toTopOf="@+id/insights_sleep_bubble" />
+
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/insights_sleep_linechart"
         android:layout_width="290dp"
         android:layout_height="145dp"
         android:layout_marginTop="32dp"
-        android:src="@mipmap/sample_graph_green"
-        android:contentDescription="@null"
         app:layout_constraintEnd_toEndOf="@+id/insights_sleep_bubble"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@+id/insights_sleep_bubble"
         app:layout_constraintTop_toTopOf="@+id/insights_sleep_bubble" />
 
-    <ImageView
-        android:id="@+id/insights_placeholder2"
+    <TextView
+        android:id="@+id/insights_hydration_yaxis"
+        android:layout_width="125dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="52dp"
+        android:layout_marginEnd="272dp"
+        android:gravity="center"
+        android:rotation="-90"
+        android:text="@string/insights_hydration_yaxis"
+        android:textAlignment="center"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/insights_hydration_bubble"
+        app:layout_constraintTop_toTopOf="@+id/insights_hydration_bubble" />
+
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/insights_hydration_linechart"
         android:layout_width="290dp"
         android:layout_height="145dp"
         android:layout_marginTop="32dp"
-        android:src="@mipmap/sample_graph_blue"
-        android:contentDescription="@null"
         app:layout_constraintEnd_toEndOf="@+id/insights_hydration_bubble"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@+id/insights_hydration_bubble"
         app:layout_constraintTop_toTopOf="@+id/insights_hydration_bubble" />
 
-    <ImageView
-        android:id="@+id/insights_placeholder3"
+    <TextView
+        android:id="@+id/insights_exercise_yaxis"
+        android:layout_width="150dp"
+        android:layout_height="100dp"
+        android:layout_marginTop="52dp"
+        android:layout_marginEnd="260dp"
+        android:gravity="center"
+        android:rotation="-90"
+        android:text="@string/insights_exercise_yaxis"
+        android:textAlignment="center"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/insights_exercise_bubble"
+        app:layout_constraintTop_toTopOf="@+id/insights_exercise_bubble" />
+
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/insights_exercise_linechart"
         android:layout_width="290dp"
         android:layout_height="145dp"
         android:layout_marginTop="32dp"
-        android:src="@mipmap/sample_graph_red"
-        android:contentDescription="@null"
         app:layout_constraintEnd_toEndOf="@+id/insights_exercise_bubble"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="@+id/insights_exercise_bubble"
         app:layout_constraintTop_toTopOf="@+id/insights_exercise_bubble" />
 
