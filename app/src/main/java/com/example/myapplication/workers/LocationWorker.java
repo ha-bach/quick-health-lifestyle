@@ -28,6 +28,8 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -52,17 +54,20 @@ public class LocationWorker extends Worker {
 
     private static final String TAG = "LocationWorker";
     Location location;
+    FirebaseAuth auth;
+    FirebaseUser user;
 
     public LocationWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
     }
 
     @NonNull
     @Override
     public Result doWork() {
-        Log.d(TAG, "Starting work. ");
-        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            getLastLocation();
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            getCurrentLocation();
         } else {
             Log.e(TAG, "Location permission not granted");
             return Result.failure();
@@ -71,7 +76,7 @@ public class LocationWorker extends Worker {
     }
 
     @SuppressLint("MissingPermission")
-    private void getLastLocation() {
+    private void getCurrentLocation() {
         FusedLocationProviderClient fusedLocationClient = LocationServices.getFusedLocationProviderClient(getApplicationContext());
 
         fusedLocationClient.getLastLocation()
@@ -87,6 +92,7 @@ public class LocationWorker extends Worker {
                             Log.e(TAG, "Last known location is null");
                         }
                     }
+
                 });
     }
 
@@ -98,8 +104,8 @@ public class LocationWorker extends Worker {
         locationPost.put("latitude", location.getLatitude());
         locationPost.put("time", location.getTime());
 
-        // TODO: replace with code getting current user ID
-        String userId = "YnfZYzNM1OqMnXgqyA6D";
+        String userId = user.getUid();
+        Log.d(TAG, "User ID: " + userId);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         CollectionReference postsRef = db.collection("users")
                 .document(userId)
