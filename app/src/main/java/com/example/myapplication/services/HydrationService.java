@@ -43,10 +43,7 @@ public class HydrationService extends Service {
     public CompletableFuture<Double> getHydrationRecommendation() {
         CompletableFuture<Double> contextualIntake = getContextualIntake();
         CompletableFuture<Double> personalIntake = getPersonalIntake();
-        return contextualIntake.thenCombine(personalIntake, (contextual, personal) -> {
-            double totalIntake = contextual + personal;
-            return totalIntake;
-        });
+        return contextualIntake.thenCombine(personalIntake, (contextual, personal) -> contextual + personal);
     }
 
     public CompletableFuture<Double> getContextualIntake() {

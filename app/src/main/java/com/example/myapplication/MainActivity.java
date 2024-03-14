@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.os.IBinder;
 import android.util.Log;
 import android.widget.TextView;
+import android.Manifest;
 
 import com.example.myapplication.services.HydrationService;
 import com.example.myapplication.workers.LocationWorker;
@@ -22,6 +23,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -62,8 +65,8 @@ private ActivityMainBinding binding;
             finish();
         }
 
-        //FirebaseFirestore firestore;
         // Testing firebase instance uncomment for testing
+        // FirebaseFirestore firestore;
 //        firestore = FirebaseFirestore.getInstance();
 //        Map<String, Object> userProfile = new HashMap<>();
 //        userProfile.put("FirstName", "Ha");
@@ -93,11 +96,11 @@ private ActivityMainBinding binding;
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
-//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE_LOCATION);
-//        }
-//        else
-//          start
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE_LOCATION);
+        }
+        else
+            getLocationUpdates();
 
         startWeatherWorker();
     }
@@ -128,13 +131,14 @@ private ActivityMainBinding binding;
             hydrationService = hydrationBinder.getService();
             hydrationBound = true;
 
-            CompletableFuture<Double> future = hydrationService.getHydrationRecommendationAsync();
-            future.thenAccept(totalIntake -> {
-                runOnUiThread(() -> {
-                    TextView textView = findViewById(R.id.text_home);
-                    textView.setText(String.format(Locale.US, "%.2f", totalIntake));
-                });
-            });
+//            CompletableFuture<Double> future = hydrationService.getHydrationRecommendation();
+//            future.thenAccept(totalIntake -> {
+//                Log.d("MainActivity", "Total Intake: " + totalIntake);
+//                runOnUiThread(() -> {
+//                    TextView textView = findViewById(R.id.text_home);
+//                    textView.setText(String.format(Locale.US, "%.2f", totalIntake));
+//                });
+//            });
         }
 
         @Override
@@ -143,26 +147,26 @@ private ActivityMainBinding binding;
         }
     };
 
-//    void getLocationUpdates() {
-//        long repeatIntervalMinutes = 15;
-//        PeriodicWorkRequest locationWorkRequest = new PeriodicWorkRequest.Builder(LocationWorker.class, repeatIntervalMinutes, TimeUnit.MINUTES)
-//                .build();
-//        WorkManager.getInstance(getApplicationContext())
-//                .enqueue(locationWorkRequest);
-//    }
-//
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//
-//        if (requestCode == REQUEST_CODE_LOCATION) {
-//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                Log.d("MainActivity", "Location permission denied.");
-//            }
-//            else {
-//                getLocationUpdates();
-//            }
-//        }
-//    }
+    private void getLocationUpdates() {
+        long repeatIntervalMinutes = 15;
+        PeriodicWorkRequest locationWorkRequest = new PeriodicWorkRequest.Builder(LocationWorker.class, repeatIntervalMinutes, TimeUnit.MINUTES)
+                .build();
+        WorkManager.getInstance(getApplicationContext())
+                .enqueue(locationWorkRequest);
+    }
+
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == REQUEST_CODE_LOCATION) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Log.d("MainActivity", "Location permission denied.");
+            }
+            else {
+                getLocationUpdates();
+            }
+        }
+    }
 
     public void startWeatherWorker() {
         long repeatIntervalHours = 4;
