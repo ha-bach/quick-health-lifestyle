@@ -195,13 +195,13 @@ public class LocationWorker extends Worker {
 //        notificationManager.notify(1, builder.build());
 //    }
     private void showNotification() {
-        button = findViewById(R.id.btnNotifications);
-        button.setOnClickListener(new View.OnClickListener(){
-          @Override
-            public void onClick(View v){
-            showNotification();
-          }
-        });
+//        button = findViewById(R.id.btnNotifications);
+//        button.setOnClickListener(new View.OnClickListener(){
+//          @Override
+//            public void onClick(View v){
+//            showNotification();
+//          }
+//        });
 
         String chanelID = "GYM_NOTIFICATION";
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), chanelID);

@@ -55,4 +55,8 @@ dependencies {
     // When using the BoM, don't specify versions in Firebase dependencies
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.code.gson:gson:2.8.8")
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
+    implementation("com.google.android.libraries.places:places:3.3.0")
+    implementation("androidx.activity:activity:1.8.0")
+    implementation ("com.squareup.okhttp3:okhttp:4.9.0")
 }
