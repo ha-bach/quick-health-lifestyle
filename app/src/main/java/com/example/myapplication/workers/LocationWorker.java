@@ -24,6 +24,7 @@ import androidx.work.WorkerParameters;
 
 import com.example.myapplication.R;
 import com.example.myapplication.ui.notifications.GymNotifActivity;
+import com.example.myapplication.ui.notifications.NotificationActionReceiver;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -132,6 +133,18 @@ public class LocationWorker extends Worker {
         String apiKey = "AIzaSyAPtLBOP5-S3G7gDN0n7-ZE6MjRUioxjOc";
         String baseUrl = "https://maps.googleapis.com/maps/api/place/nearbysearch/json";
         String requestUrl = baseUrl + "?location=" + latitude + "," + longitude + "&radius=5000&type=gym&key=" + apiKey;
+        String userId = user.getUid();
+        Log.d(TAG, "User ID: " + userId);
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("users").document(userId).get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists() && documentSnapshot.contains("preferredGymTime")) {
+                // Assuming preferredGymTime is stored as a String
+                String preferredGymTime = documentSnapshot.getString("preferredGymTime");
+                Log.d(TAG, "Preferred Gym Time: " + preferredGymTime);
+            } else {
+                Log.e(TAG, "No preferred gym time found for user.");
+            }
+        }).addOnFailureListener(e -> Log.e(TAG, "Error fetching preferred gym time", e));
 
         Request request = new Request.Builder()
                 .url(requestUrl)
@@ -154,7 +167,7 @@ public class LocationWorker extends Worker {
                         for (int i = 0; i < 5; i++) {
                             JSONObject gym = results.getJSONObject(i);
                             String gymName = gym.getString("name");
-                            Log.i(TAG, "Found gym: " + gymName);
+                            Log.i(TAG, "Found2 gym: " + gymName);
                         }
                         if (results.length() > 0) {
                             Calendar cal = Calendar.getInstance();
@@ -178,36 +191,7 @@ public class LocationWorker extends Worker {
         });
     }
 
-//    private void showNotification() {
-//        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "notifyGym")
-//                .setSmallIcon(android.R.drawable.ic_dialog_info)
-//                .setContentTitle("Gym Nearby")
-//                .setContentText("There's a gym nearby! Time for a workout?")
-//                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-//
-//        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(getApplicationContext());
-//
-//        // notificationId is a unique int for each notification that you must define
-//        if (ActivityCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-//            // TODO: Consider calling
-//            //    ActivityCompat#requestPermissions
-//            // here to request the missing permissions, and then overriding
-//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//            //                                          int[] grantResults)
-//            // to handle the case where the user grants the permission. See the documentation
-//            // for ActivityCompat#requestPermissions for more details.
-//            return;
-//        }
-//        notificationManager.notify(1, builder.build());
-//    }
     private void showNotification() {
-//        button = findViewById(R.id.btnNotifications);
-//        button.setOnClickListener(new View.OnClickListener(){
-//          @Override
-//            public void onClick(View v){
-//            showNotification();
-//          }
-//        });
 
         String chanelID = "GYM_NOTIFICATION";
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), chanelID);
@@ -224,6 +208,15 @@ public class LocationWorker extends Worker {
         builder.setContentIntent(pendingIntent);
         NotificationManager manager = (NotificationManager)
                 getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        Intent yesIntent = new Intent(getApplicationContext(),
+                NotificationActionReceiver.class);
+        yesIntent.setAction("YES_ACTION");
+        PendingIntent yesPendingIntent = PendingIntent.getBroadcast(getApplicationContext(),
+                0, yesIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        Intent noIntent = new Intent(getApplicationContext(),
+                NotificationActionReceiver.class);
+        noIntent.setAction("NO_ACTION");
+        PendingIntent noPendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 1, noIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel notificationChannel =
                     manager.getNotificationChannel(chanelID);
@@ -236,6 +229,10 @@ public class LocationWorker extends Worker {
                 manager.createNotificationChannel(notificationChannel);
             }
         }
+        // Add actions to the builder
+        builder.addAction(R.drawable.baseline_notifications, "Yes", yesPendingIntent);
+        builder.addAction(R.drawable.ic_account_circle_black_24dp, "No", noPendingIntent);
+
         manager.notify(0, builder.build());
 
     }
