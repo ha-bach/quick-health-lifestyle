@@ -4,6 +4,7 @@ import android.content.Context;
 import android.location.Location;
 import android.util.Log;
 
+import androidx.annotation.LongDef;
 import androidx.annotation.NonNull;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
@@ -18,6 +19,8 @@ import java.util.Map;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -28,15 +31,20 @@ import com.google.gson.JsonObject;
 public class WeatherWorker extends Worker {
 
     private static final String TAG = "WeatherWorker";
+    FirebaseAuth auth;
+    FirebaseUser user;
 
     public WeatherWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
+        auth = FirebaseAuth.getInstance();
+        user = auth.getCurrentUser();
     }
 
     @NonNull
     @Override
     public Result doWork() {
-        String userId = "YnfZYzNM1OqMnXgqyA6D";
+        String userId = user.getUid();
+        Log.d(TAG, "User id: " + userId);
         FirebaseFirestore firestore = FirebaseFirestore.getInstance();
         CollectionReference collectionRef = firestore.collection("users")
                 .document(userId)
@@ -98,7 +106,7 @@ public class WeatherWorker extends Worker {
                     Log.d(TAG, "Weather API called. Humidity: " + humidity + ". Temperature: " + temp);
 
                     FirebaseFirestore firestore = FirebaseFirestore.getInstance();
-                    String userId = "YnfZYzNM1OqMnXgqyA6D";  // Replace with the actual user ID
+                    String userId = user.getUid();
                     CollectionReference docRef = firestore.collection("users")
                             .document(userId)
                             .collection("weatherData");
