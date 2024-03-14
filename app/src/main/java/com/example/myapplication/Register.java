@@ -158,7 +158,7 @@ public class Register extends AppCompatActivity {
                                     user.put("sex", sex);
                                     user.put("age", Integer.parseInt(age));
                                     user.put("preferredGymTime", preferredGymTime);
-                                    Integer[] emptyArray = {0,0,0,0,0,0,0,0,0,0};
+                                    Integer[] emptyArray = {0,0,0,0,0,0,0};
                                     List<Integer> emptyHistory = Arrays.asList(emptyArray);
                                     user.put("sleepHistory", emptyHistory);
                                     user.put("hydrationHistory", emptyHistory);

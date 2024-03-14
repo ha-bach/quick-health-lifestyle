@@ -32,6 +32,9 @@
     <string name="insights_sleep">Sleep:</string>
     <string name="insights_hydration">Hydration:</string>
     <string name="insights_exercise">Exercise:</string>
+    <string name="insights_sleep_yaxis">Hours Slept</string>
+    <string name="insights_hydration_yaxis">Cups Drank</string>
+    <string name="insights_exercise_yaxis">Hours Exercised</string>
 
     <string name="profile_intro">Displaying Profile for %1$s:</string>
     <string name="profile_first_name">First Name:</string>
