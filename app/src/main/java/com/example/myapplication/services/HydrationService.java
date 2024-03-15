@@ -108,10 +108,8 @@ public class HydrationService extends Service {
         if (intent != null && intent.getAction() != null) {
             String action = intent.getAction();
             if ("HYDRATION_YES_ACTION".equals(action)) {
-                Log.d(TAG, "User clicked Yes on notification");
                 handleButtonAction(true);
             } else if ("HYDRATION_NO_ACTION".equals(action)) {
-                Log.d(TAG, "User clicked No on notification");
                 handleButtonAction(false);
             }
         }
@@ -244,17 +242,31 @@ public class HydrationService extends Service {
         }
         DocumentReference userDocRef = firestore.collection("users").document(user.getUid());
 
-        userDocRef.update("hydrationHistory", FieldValue.arrayUnion(recommendationFulfilled ? recommendedIntakeInCups : 0))
+        double toPush = recommendationFulfilled ? recommendedIntakeInCups : 0;
+        userDocRef.update("hydrationHistory", FieldValue.arrayUnion(toPush))
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "Hydration history record pushed to Firestore");
+                        Log.d(TAG, "Hydration history record pushed to Firestore: " + toPush + " cups");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.e(TAG, "Failed to push hydration history record to Firestore", e);
+                    }
+                });
+        userDocRef.update("hydratedToday", recommendationFulfilled)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "hydratedToday field set on Firestore: " + recommendationFulfilled);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e(TAG, "Error setting hydratedToday field", e);
                     }
                 });
     }
