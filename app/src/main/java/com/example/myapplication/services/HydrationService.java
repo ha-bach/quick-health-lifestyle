@@ -27,15 +27,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 public class HydrationService extends Service {
@@ -187,76 +182,8 @@ public class HydrationService extends Service {
         return humidityIntake + temperatureIntake;
     }
 
-//    @SuppressLint("MissingPermission")
-//    private void showNotification() {
-//        String chanelID = "HYDRATION_NOTIFICATION";
-//        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), chanelID);
-//        builder.setSmallIcon(R.drawable.baseline_notifications)
-//                .setContentTitle("Quick Health Manager")
-//                .setContentText("Have you drank the recommended amount of water today?")
-//                .setAutoCancel(true)
-//                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-//        Intent intent = new Intent(getApplicationContext(), HydrationNotifActivity.class);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//        intent.putExtra("data", "Parameters");
-//        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),
-//                0, intent, PendingIntent.FLAG_MUTABLE);
-//        builder.setContentIntent(pendingIntent);
-//        NotificationManager manager = (NotificationManager)
-//                getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-//        Intent yesIntent = new Intent(getApplicationContext(),
-//                HydrationNotificationReceiver.class);
-//        yesIntent.setAction("HYDRATION_YES_ACTION");
-//        PendingIntent yesPendingIntent = PendingIntent.getBroadcast(getApplicationContext(),
-//                0, yesIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-//        Intent noIntent = new Intent(getApplicationContext(),
-//                HydrationNotificationReceiver.class);
-//        noIntent.setAction("HYDRATION_NO_ACTION");
-//        PendingIntent noPendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 1, noIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            NotificationChannel notificationChannel =
-//                    manager.getNotificationChannel(chanelID);
-//            if (notificationChannel == null){
-//                int importance = NotificationManager.IMPORTANCE_HIGH;
-//                notificationChannel = new NotificationChannel(  chanelID, "Description", importance);
-//
-//                notificationChannel.setLightColor(Color.BLUE);
-//                notificationChannel.enableVibration(true);
-//                manager.createNotificationChannel(notificationChannel);
-//            }
-//        }
-//        builder.addAction(R.drawable.baseline_notifications, "Yes", yesPendingIntent);
-//        builder.addAction(R.drawable.ic_account_circle_black_24dp, "No", noPendingIntent);
-//
-//        manager.notify(0, builder.build());
-//
-////        String channelId = "HYDRATION_NOTIFICATION";
-////        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, channelId);
-////        builder.setSmallIcon(R.drawable.baseline_notifications)
-////                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-////
-////        RemoteViews remoteViews = new RemoteViews(getPackageName(), R.layout.hydration_notification);
-////        remoteViews.setTextViewText(R.id.notification_title, "Notification Title");
-////        remoteViews.setTextViewText(R.id.notification_message, "Notification Message");
-////
-////        Intent button1Intent = new Intent(this, NotificationReceiver.class);
-////        button1Intent.setAction("BUTTON_1_ACTION");
-////        PendingIntent button1PendingIntent = PendingIntent.getBroadcast(this, 0, button1Intent, PendingIntent.FLAG_UPDATE_CURRENT);
-////        remoteViews.setOnClickPendingIntent(R.id.button1, button1PendingIntent);
-////
-////        Intent button2Intent = new Intent(this, NotificationReceiver.class);
-////        button2Intent.setAction("BUTTON_2_ACTION");
-////        PendingIntent button2PendingIntent = PendingIntent.getBroadcast(this, 0, button2Intent, PendingIntent.FLAG_UPDATE_CURRENT);
-////        remoteViews.setOnClickPendingIntent(R.id.button2, button2PendingIntent);
-////
-////        builder.setCustomContentView(remoteViews);
-////
-////        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-////        notificationManager.notify(1, builder.build());
-//    }
-
-        @SuppressLint("MissingPermission")
-        public void showNotification() {
+    @SuppressLint("MissingPermission")
+    public void showNotification() {
         String channelId = "HYDRATION_NOTIFICATION";
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), channelId);
         builder.setSmallIcon(R.drawable.baseline_notifications)
