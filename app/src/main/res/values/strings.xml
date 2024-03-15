@@ -17,15 +17,15 @@
 
     <string name="home_intro">Welcome, %1$s!</string>
     <string name="home_recommended_sleep">Recommended Sleep:</string>
-    <string name="home_target_hours">Target Hours:</string>
+    <string name="home_target_hours">Yesterday\'s Sleep:</string>
     <string name="home_recommended_hydration">Recommended Hydration:</string>
     <string name="home_recommended_exercise">Recommended Exercise:</string>
     <string name="home_status">Status:</string>
 
-    <string name="home_placeholder_rec1">7 hours</string>
-    <string name="home_placeholder_status1">12 AM - 7 AM</string>
+    <string name="home_placeholder_rec1">%1$s hours</string>
     <string name="home_placeholder_rec2">9 cups</string>
-    <string name="home_placeholder_status2">Incomplete</string>
+    <string name="home_placeholder_status2">Unsatisfied</string>
+    <string name="home_placeholder_status3">Incomplete</string>
     <string name="home_placeholder_rec3">60 minutes daily</string>
 
     <string name="insights_intro">Displaying Insights of %1$s:</string>

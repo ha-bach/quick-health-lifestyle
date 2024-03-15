@@ -19,6 +19,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.myapplication.R;
 import com.example.myapplication.databinding.FragmentHomeBinding;
 import com.example.myapplication.services.HydrationService;
+import com.example.myapplication.sleep.SleepRecommender;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -27,6 +28,7 @@ import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 
@@ -35,7 +37,7 @@ public class HomeFragment extends Fragment {
 private FragmentHomeBinding binding;
 
     FirebaseAuth auth;
-    TextView textViewHomeTitle;
+    TextView textViewHomeTitle, recommendedSleep, yesterdaysSleep, hydrationSatisfied, exerciseSatisfied;
     FirebaseUser user;
     String userID;
     FirebaseFirestore firestore;
@@ -51,6 +53,10 @@ private FragmentHomeBinding binding;
         View root = binding.getRoot();
 
         textViewHomeTitle = binding.homeWelcome;
+        recommendedSleep = binding.homePlaceholder1;
+        yesterdaysSleep = binding.homePlaceholder2;
+        hydrationSatisfied = binding.homePlaceholder4;
+        exerciseSatisfied = binding.homePlaceholder6;
 
         auth = FirebaseAuth.getInstance();
         user = auth.getCurrentUser();
@@ -62,6 +68,19 @@ private FragmentHomeBinding binding;
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
                 if (getActivity() != null && documentSnapshot != null) {
                     textViewHomeTitle.setText(getString(R.string.home_intro, documentSnapshot.getString("firstName")));
+
+                    int yesterdaysSleepHours = Math.toIntExact((((List<Long>)documentSnapshot.get("sleepHistory")).get(0)));
+                    SleepRecommender sleepRecommender = new SleepRecommender(Math.toIntExact((Long)(documentSnapshot.get("age"))), yesterdaysSleepHours);
+                    recommendedSleep.setText(getString(R.string.home_placeholder_rec1, Integer.toString(sleepRecommender.sleepAmountRecommender())));
+                    yesterdaysSleep.setText(getString(R.string.home_placeholder_rec1, Integer.toString(yesterdaysSleepHours)));
+
+                    boolean hydratedToday = documentSnapshot.getBoolean("hydratedToday");
+                    if (hydratedToday)
+                        hydrationSatisfied.setText("Satisfied");
+
+                    boolean exercisedToday = documentSnapshot.getBoolean("exercisedToday");
+                    if (exercisedToday)
+                        exerciseSatisfied.setText("Complete");
                 }
             }
         });
