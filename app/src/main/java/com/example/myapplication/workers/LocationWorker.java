@@ -12,19 +12,16 @@ import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
 import android.util.Log;
-import android.view.View;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import com.example.myapplication.R;
 import com.example.myapplication.ui.notifications.GymNotifActivity;
-import com.example.myapplication.ui.notifications.NotificationActionReceiver;
+import com.example.myapplication.ui.notifications.GymNotificationActionReceiver;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -57,6 +54,7 @@ public class LocationWorker extends Worker {
     Location location;
     FirebaseAuth auth;
     FirebaseUser user;
+    private final int NOTIFICATION_ID = 1002;
 
     public LocationWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
@@ -192,7 +190,6 @@ public class LocationWorker extends Worker {
     }
 
     private void showNotification() {
-
         String chanelID = "GYM_NOTIFICATION";
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), chanelID);
         builder.setSmallIcon(R.drawable.baseline_notifications)
@@ -200,21 +197,23 @@ public class LocationWorker extends Worker {
         .setContentText("Do you plan to go to the gym today?")
         .setAutoCancel(true)
         .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
         Intent intent = new Intent(getApplicationContext(), GymNotifActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("data", "Parameters");
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),
                 0, intent, PendingIntent.FLAG_MUTABLE);
         builder.setContentIntent(pendingIntent);
+
         NotificationManager manager = (NotificationManager)
                 getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
         Intent yesIntent = new Intent(getApplicationContext(),
-                NotificationActionReceiver.class);
+                GymNotificationActionReceiver.class);
         yesIntent.setAction("YES_ACTION");
         PendingIntent yesPendingIntent = PendingIntent.getBroadcast(getApplicationContext(),
-                0, yesIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+                1, yesIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         Intent noIntent = new Intent(getApplicationContext(),
-                NotificationActionReceiver.class);
+                GymNotificationActionReceiver.class);
         noIntent.setAction("NO_ACTION");
         PendingIntent noPendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 1, noIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -229,11 +228,11 @@ public class LocationWorker extends Worker {
                 manager.createNotificationChannel(notificationChannel);
             }
         }
-        // Add actions to the builder
         builder.addAction(R.drawable.baseline_notifications, "Yes", yesPendingIntent);
         builder.addAction(R.drawable.ic_account_circle_black_24dp, "No", noPendingIntent);
 
-        manager.notify(0, builder.build());
-
+        manager.notify(NOTIFICATION_ID, builder.build());
     }
+
+
 }

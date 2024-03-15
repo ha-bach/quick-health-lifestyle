@@ -52,7 +52,7 @@
             android:enabled="true"
             android:exported="false">
         </service>
-        <receiver android:name=".ui.notifications.NotificationActionReceiver" android:exported="false">
+        <receiver android:name=".ui.notifications.GymNotificationActionReceiver" android:exported="false">
             <intent-filter>
                 <action android:name="YES_ACTION" />
                 <action android:name="NO_ACTION" />
