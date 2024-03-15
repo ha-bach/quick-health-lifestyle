@@ -41,6 +41,7 @@ public class HydrationService extends Service {
     FirebaseUser user;
     FirebaseFirestore firestore;
     double recommendedIntakeInCups;
+    private final int NOTIFICATION_ID = 1001;
 
     public class HydrationBinder extends Binder {
         public HydrationService getService() {
@@ -108,10 +109,10 @@ public class HydrationService extends Service {
             String action = intent.getAction();
             if ("HYDRATION_YES_ACTION".equals(action)) {
                 Log.d(TAG, "User clicked Yes on notification");
-                handleYesAction();
+                handleButtonAction(true);
             } else if ("HYDRATION_NO_ACTION".equals(action)) {
                 Log.d(TAG, "User clicked No on notification");
-                handleNoAction();
+                handleButtonAction(false);
             }
         }
         return super.onStartCommand(intent, flags, startId);
@@ -228,15 +229,12 @@ public class HydrationService extends Service {
         builder.addAction(R.drawable.ic_account_circle_black_24dp, "No", noPendingIntent);
 
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        notificationManager.notify(0, builder.build());
+        notificationManager.notify(NOTIFICATION_ID, builder.build());
     }
 
-    private void handleYesAction() {
-        updateFirestoreHydrationHistory(true);
-    }
-
-    private void handleNoAction() {
-        updateFirestoreHydrationHistory(false);
+    private void handleButtonAction(boolean recommendationFulfilled) {
+        dismissNotification();
+        updateFirestoreHydrationHistory(recommendationFulfilled);
     }
 
     private void updateFirestoreHydrationHistory(boolean recommendationFulfilled) {
@@ -259,5 +257,10 @@ public class HydrationService extends Service {
                         Log.e(TAG, "Failed to push hydration history record to Firestore", e);
                     }
                 });
+    }
+
+    private void dismissNotification() {
+        NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(NOTIFICATION_ID);
     }
 }
