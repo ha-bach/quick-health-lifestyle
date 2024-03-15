@@ -29,6 +29,5 @@ y_pred = gbm.predict(X_test)
 mse = mean_squared_error(y_test, y_pred)
 print("Mean Squared Error:", mse)
 
-
 # Save the trained model
 joblib.dump(gbm, "sleep_wakeup_gbm_model.pkl")
