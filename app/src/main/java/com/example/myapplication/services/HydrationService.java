@@ -31,6 +31,8 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.concurrent.CompletableFuture;
 
 public class HydrationService extends Service {
@@ -59,7 +61,7 @@ public class HydrationService extends Service {
     public CompletableFuture<Double> getHydrationRecommendation() {
         CompletableFuture<Double> contextualIntake = getContextualIntake();
         CompletableFuture<Double> personalIntake = getPersonalIntake();
-        showNotification();
+        scheduleNotification();
         return contextualIntake.thenCombine(personalIntake, (contextual, personal) -> {
             recommendedIntakeInCups = (contextual + personal) / 236.588;
             return recommendedIntakeInCups;
@@ -182,7 +184,7 @@ public class HydrationService extends Service {
     }
 
     @SuppressLint("MissingPermission")
-    public void showNotification() {
+    public void scheduleNotification() {
         String channelId = "HYDRATION_NOTIFICATION";
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), channelId);
         builder.setSmallIcon(R.drawable.baseline_notifications)
@@ -195,18 +197,18 @@ public class HydrationService extends Service {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra("data", "Parameters");
         PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),
-                0, intent, PendingIntent.FLAG_MUTABLE);
+                2, intent, PendingIntent.FLAG_MUTABLE);
         builder.setContentIntent(pendingIntent);
 
         Intent yesIntent = new Intent(getApplicationContext(), HydrationService.class);
         yesIntent.setAction("HYDRATION_YES_ACTION");
         PendingIntent yesPendingIntent = PendingIntent.getService(getApplicationContext(),
-                0, yesIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+                2, yesIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         Intent noIntent = new Intent(getApplicationContext(), HydrationService.class);
         noIntent.setAction("HYDRATION_NO_ACTION");
         PendingIntent noPendingIntent = PendingIntent.getService(getApplicationContext(),
-                1, noIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+                3, noIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager manager = (NotificationManager)
@@ -232,18 +234,20 @@ public class HydrationService extends Service {
 
     private void handleButtonAction(boolean recommendationFulfilled) {
         dismissNotification();
-        updateFirestoreHydrationHistory(recommendationFulfilled);
+        updateFirestore(recommendationFulfilled);
     }
 
-    private void updateFirestoreHydrationHistory(boolean recommendationFulfilled) {
+    private void updateFirestore(boolean recommendationFulfilled) {
         if(user == null)    {
             Log.e(TAG, "Cannot retrieve current user. Cancelled pushing hydration record to Firestore.");
             return;
         }
         DocumentReference userDocRef = firestore.collection("users").document(user.getUid());
 
+        int date = Calendar.getInstance().get(Calendar.DATE);
+
         double toPush = recommendationFulfilled ? recommendedIntakeInCups : 0;
-        userDocRef.update("hydrationHistory", FieldValue.arrayUnion(toPush))
+        userDocRef.update("hydrationHistory." + date, toPush)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
