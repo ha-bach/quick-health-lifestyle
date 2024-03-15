@@ -3,7 +3,13 @@ import joblib
 
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import mean_squared_error
+import numpy as np
+from sklearn.metrics import (
+    mean_absolute_error,
+    r2_score,
+    explained_variance_score,
+    mean_squared_error,
+)
 
 # Load dataset
 data = pd.read_csv(
@@ -28,6 +34,21 @@ y_pred = gbm.predict(X_test)
 # Evaluate the model
 mse = mean_squared_error(y_test, y_pred)
 print("Mean Squared Error:", mse)
+
+rmse = np.sqrt(mse)
+print("Root Mean Squared Error:", rmse)
+
+# Mean Absolute Error (MAE)
+mae = mean_absolute_error(y_test, y_pred)
+print("Mean Absolute Error:", mae)
+
+# R-squared (R^2) Score
+r2 = r2_score(y_test, y_pred)
+print("R-squared (R^2) Score:", r2)
+
+# Explained Variance Score
+explained_variance = explained_variance_score(y_test, y_pred)
+print("Explained Variance Score:", explained_variance)
 
 # Save the trained model
 joblib.dump(gbm, "sleep_wakeup_gbm_model.pkl")
