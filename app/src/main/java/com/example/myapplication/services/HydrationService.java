@@ -61,7 +61,7 @@ public class HydrationService extends Service {
     public CompletableFuture<Double> getHydrationRecommendation() {
         CompletableFuture<Double> contextualIntake = getContextualIntake();
         CompletableFuture<Double> personalIntake = getPersonalIntake();
-        scheduleNotification();
+//        scheduleNotification();
         return contextualIntake.thenCombine(personalIntake, (contextual, personal) -> {
             recommendedIntakeInCups = (contextual + personal) / 236.588;
             return recommendedIntakeInCups;
@@ -245,7 +245,6 @@ public class HydrationService extends Service {
         DocumentReference userDocRef = firestore.collection("users").document(user.getUid());
 
         int date = Calendar.getInstance().get(Calendar.DATE);
-
         double toPush = recommendationFulfilled ? recommendedIntakeInCups : 0;
         userDocRef.update("hydrationHistory." + date, toPush)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
