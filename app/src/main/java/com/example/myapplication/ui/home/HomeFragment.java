@@ -18,6 +18,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.myapplication.R;
 import com.example.myapplication.databinding.FragmentHomeBinding;
+import com.example.myapplication.exercise.ExerciseRecommender;
 import com.example.myapplication.services.HydrationService;
 import com.example.myapplication.sleep.SleepRecommender;
 import com.google.firebase.auth.FirebaseAuth;
@@ -37,7 +38,7 @@ public class HomeFragment extends Fragment {
 private FragmentHomeBinding binding;
 
     FirebaseAuth auth;
-    TextView textViewHomeTitle, recommendedSleep, yesterdaysSleep, hydrationSatisfied, exerciseSatisfied;
+    TextView textViewHomeTitle, recommendedSleep, yesterdaysSleep, hydrationSatisfied, recommendedExercise, exerciseSatisfied;
     FirebaseUser user;
     String userID;
     FirebaseFirestore firestore;
@@ -56,6 +57,7 @@ private FragmentHomeBinding binding;
         recommendedSleep = binding.homePlaceholder1;
         yesterdaysSleep = binding.homePlaceholder2;
         hydrationSatisfied = binding.homePlaceholder4;
+        recommendedExercise = binding.homePlaceholder5;
         exerciseSatisfied = binding.homePlaceholder6;
 
         auth = FirebaseAuth.getInstance();
@@ -78,9 +80,14 @@ private FragmentHomeBinding binding;
                     if (hydratedToday)
                         hydrationSatisfied.setText("Satisfied");
 
+                    ExerciseRecommender exerciseRecommender = new ExerciseRecommender(Math.toIntExact((Long)(documentSnapshot.get("age"))));
+                    recommendedExercise.setText(getString(R.string.home_placeholder_rec3, exerciseRecommender.exerciseAmountRecommender()));
+
                     boolean exercisedToday = documentSnapshot.getBoolean("exercisedToday");
                     if (exercisedToday)
                         exerciseSatisfied.setText("Complete");
+
+
                 }
             }
         });

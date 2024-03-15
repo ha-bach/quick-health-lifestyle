@@ -26,7 +26,7 @@
     <string name="home_placeholder_rec2">9 cups</string>
     <string name="home_placeholder_status2">Unsatisfied</string>
     <string name="home_placeholder_status3">Incomplete</string>
-    <string name="home_placeholder_rec3">60 minutes daily</string>
+    <string name="home_placeholder_rec3">%1$s minutes daily</string>
 
     <string name="insights_intro">Displaying Insights of %1$s:</string>
     <string name="insights_sleep">Sleep:</string>
