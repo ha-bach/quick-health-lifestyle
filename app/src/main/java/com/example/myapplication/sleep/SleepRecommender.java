@@ -1,17 +1,17 @@
 package com.example.myapplication.sleep;
 
 public class SleepPredictor {
-    private int wakeUpPrediction;
+    private int previousSleep;
     private int age;
 
-    public SleepPredictor(int age, int wakeUpPrediction) {
+    public SleepPredictor(int age, int previousSleep) {
         this.age = age;
-        this.wakeUpPrediction = wakeUpPrediction;
+        this.previousSleep = previousSleep;
     }
 
     public int sleepTimeRecommender() {
         if (age < 18) {
-            if (wakeUpPrediction >= 8)
+            if (previousSleep >= 8)
                 return wakeUpPrediction - 8;
             else
                 return 24 + (wakeUpPrediction - 8);
