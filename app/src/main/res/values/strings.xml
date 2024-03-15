@@ -20,21 +20,20 @@
     <string name="home_target_hours">Yesterday\'s Sleep:</string>
     <string name="home_recommended_hydration">Recommended Hydration:</string>
     <string name="home_recommended_exercise">Recommended Exercise:</string>
-    <string name="home_status">Status:</string>
+    <string name="home_status">Daily Status:</string>
 
-    <string name="home_placeholder_rec1">%1$s hours</string>
-    <string name="home_placeholder_rec2">9 cups</string>
-    <string name="home_placeholder_status2">Unsatisfied</string>
+    <string name="home_placeholder_rec1">%1$s Hours</string>
+    <string name="home_placeholder_rec2">9 Cups</string>
     <string name="home_placeholder_status3">Incomplete</string>
-    <string name="home_placeholder_rec3">%1$s minutes daily</string>
+    <string name="home_placeholder_rec3">%1$s Minutes Daily</string>
 
-    <string name="insights_intro">Displaying Insights of %1$s:</string>
+    <string name="insights_intro">Displaying Insights for %1$s:</string>
     <string name="insights_sleep">Sleep:</string>
     <string name="insights_hydration">Hydration:</string>
     <string name="insights_exercise">Exercise:</string>
     <string name="insights_sleep_yaxis">Hours Slept</string>
     <string name="insights_hydration_yaxis">Cups Drank</string>
-    <string name="insights_exercise_yaxis">Hours Exercised</string>
+    <string name="insights_exercise_yaxis">Minutes Exercised</string>
 
     <string name="profile_intro">Displaying Profile for %1$s:</string>
     <string name="profile_first_name">First Name:</string>

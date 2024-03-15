@@ -78,7 +78,7 @@ private FragmentHomeBinding binding;
 
                     boolean hydratedToday = documentSnapshot.getBoolean("hydratedToday");
                     if (hydratedToday)
-                        hydrationSatisfied.setText("Satisfied");
+                        hydrationSatisfied.setText("Complete");
 
                     ExerciseRecommender exerciseRecommender = new ExerciseRecommender(Math.toIntExact((Long)(documentSnapshot.get("age"))));
                     recommendedExercise.setText(getString(R.string.home_placeholder_rec3, exerciseRecommender.exerciseAmountRecommender()));
@@ -124,7 +124,7 @@ private FragmentHomeBinding binding;
             CompletableFuture<Double> hydrationRecommendation = hydrationService.getHydrationRecommendation();
             hydrationRecommendation.thenAccept(totalIntake -> {
                 requireActivity().runOnUiThread(() -> {
-                    String formattedText = String.format(Locale.getDefault(), "%.0f cups", totalIntake);
+                    String formattedText = String.format(Locale.getDefault(), "%.0f Cups", totalIntake);
                     binding.hydrationRecommendationValue.setText(formattedText);
                 });
             });

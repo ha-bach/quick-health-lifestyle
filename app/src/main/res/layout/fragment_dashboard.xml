@@ -124,7 +124,7 @@
         android:text="@string/insights_sleep_yaxis"
         android:textAlignment="center"
         android:textColor="#000000"
-        android:textSize="20sp"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="@+id/insights_sleep_bubble"
         app:layout_constraintTop_toTopOf="@+id/insights_sleep_bubble" />
 
@@ -148,7 +148,7 @@
         android:text="@string/insights_hydration_yaxis"
         android:textAlignment="center"
         android:textColor="#000000"
-        android:textSize="20sp"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="@+id/insights_hydration_bubble"
         app:layout_constraintTop_toTopOf="@+id/insights_hydration_bubble" />
 
@@ -172,7 +172,7 @@
         android:text="@string/insights_exercise_yaxis"
         android:textAlignment="center"
         android:textColor="#000000"
-        android:textSize="20sp"
+        android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="@+id/insights_exercise_bubble"
         app:layout_constraintTop_toTopOf="@+id/insights_exercise_bubble" />
 
