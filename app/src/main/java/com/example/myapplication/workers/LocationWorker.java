@@ -42,9 +42,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -139,6 +142,8 @@ public class LocationWorker extends Worker {
             if (documentSnapshot.exists() && documentSnapshot.contains("preferredGymTime")) {
                 String preferredGymTime = documentSnapshot.getString("preferredGymTime");
                 Log.d(TAG, "Preferred Gym Time: " + preferredGymTime);
+                scheduleGymNotification(convertHourStringToInt(preferredGymTime));
+                // call showNotification() for immediate notification
             } else {
                 Log.e(TAG, "No preferred gym time found for user.");
             }
@@ -162,22 +167,10 @@ public class LocationWorker extends Worker {
                     try {
                         JSONObject jsonObject = new JSONObject(responseData);
                         JSONArray results = jsonObject.getJSONArray("results");
-                        for (int i = 0; i < 5; i++) {
+                        for (int i = 0; i < 5 && i < results.length(); i++) {
                             JSONObject gym = results.getJSONObject(i);
                             String gymName = gym.getString("name");
                             Log.i(TAG, "Found2 gym: " + gymName);
-                        }
-                        if (results.length() > 0) {
-                            Calendar cal = Calendar.getInstance();
-//                            int hour = cal.get(Calendar.HOUR_OF_DAY);
-                            int hour = 0;
-                            // Check if it's 5 PM
-                            if (hour == 0) {
-                                showNotification();
-                                String n = "done";
-                                Log.i("Show2 Notification", n);
-                                hour++;
-                            }
                         }
                     } catch (JSONException e) {
                         Log.e(TAG, "Error parsing response", e);
@@ -234,5 +227,25 @@ public class LocationWorker extends Worker {
         manager.notify(NOTIFICATION_ID, builder.build());
     }
 
+    private void scheduleGymNotification(int scheduledHour) {
+        Calendar cal = Calendar.getInstance();
+        int hour = cal.get(Calendar.HOUR_OF_DAY);
 
+        if(hour == scheduledHour)
+            showNotification();
+    }
+
+    public int convertHourStringToInt(String hourString) {
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("hh:mm a", Locale.US);
+            Date date = dateFormat.parse(hourString);
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            int hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
+            return hourOfDay;
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
 }
