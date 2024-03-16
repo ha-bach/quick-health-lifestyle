@@ -61,7 +61,8 @@ public class HydrationService extends Service {
     public CompletableFuture<Double> getHydrationRecommendation() {
         CompletableFuture<Double> contextualIntake = getContextualIntake();
         CompletableFuture<Double> personalIntake = getPersonalIntake();
-//        scheduleNotification();
+        scheduleHydrationNotification(9);
+        // call showNotification() for immediate notification
         return contextualIntake.thenCombine(personalIntake, (contextual, personal) -> {
             recommendedIntakeInCups = (contextual + personal) / 236.588;
             return recommendedIntakeInCups;
@@ -184,7 +185,7 @@ public class HydrationService extends Service {
     }
 
     @SuppressLint("MissingPermission")
-    public void scheduleNotification() {
+    public void showNotification() {
         String channelId = "HYDRATION_NOTIFICATION";
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), channelId);
         builder.setSmallIcon(R.drawable.baseline_notifications)
@@ -277,5 +278,13 @@ public class HydrationService extends Service {
     private void dismissNotification() {
         NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(NOTIFICATION_ID);
+    }
+
+    private void scheduleHydrationNotification(int scheduledHour) {
+        Calendar cal = Calendar.getInstance();
+        int hour = cal.get(Calendar.HOUR_OF_DAY);
+
+        if(hour == scheduledHour)
+            showNotification();
     }
 }
