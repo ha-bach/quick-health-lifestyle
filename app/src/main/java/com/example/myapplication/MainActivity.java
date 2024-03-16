@@ -1,22 +1,25 @@
 package com.example.myapplication;
 
+import android.annotation.SuppressLint;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.TextView;
 import android.Manifest;
 
 import com.example.myapplication.services.HydrationService;
+import com.example.myapplication.sleep.SleepRecommender;
+import com.example.myapplication.ui.notifications.SleepNotifActivity;
 import com.example.myapplication.workers.LocationWorker;
 import com.example.myapplication.workers.WeatherWorker;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -24,6 +27,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -35,15 +40,18 @@ import androidx.work.WorkManager;
 import com.example.myapplication.databinding.ActivityMainBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.Locale;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
-
-private ActivityMainBinding binding;
-
+    private static final String TAG = "MainActivity";
+    private ActivityMainBinding binding;
     FirebaseAuth auth;
     FirebaseUser user;
 
@@ -65,30 +73,7 @@ private ActivityMainBinding binding;
             finish();
         }
 
-        // Testing firebase instance uncomment for testing
-        // FirebaseFirestore firestore;
-//        firestore = FirebaseFirestore.getInstance();
-//        Map<String, Object> userProfile = new HashMap<>();
-//        userProfile.put("FirstName", "Ha");
-//        userProfile.put("Last", "K");
-//        userProfile.put("Height", "5'5");
-//
-//        firestore.collection("users").add(userProfile).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-//            @Override
-//            public void onSuccess(DocumentReference documentReference) {
-//                Toast.makeText(getApplicationContext(), "Success", Toast.LENGTH_LONG).show();
-//                }
-//            }).addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception e) {
-//                Toast.makeText(getApplicationContext(), "Failure", Toast.LENGTH_LONG).show();
-//            }
-//        });
-
-
         BottomNavigationView navView = findViewById(R.id.nav_view);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications)
                 .build();
@@ -103,6 +88,8 @@ private ActivityMainBinding binding;
             getLocationUpdates();
 
         startWeatherWorker();
+        scheduleSleepNotification(11);
+        // call startSleepNotification() for instant notification
     }
 
     @Override
@@ -130,15 +117,6 @@ private ActivityMainBinding binding;
             HydrationService.HydrationBinder hydrationBinder = (HydrationService.HydrationBinder) service;
             hydrationService = hydrationBinder.getService();
             hydrationBound = true;
-
-//            CompletableFuture<Double> future = hydrationService.getHydrationRecommendation();
-//            future.thenAccept(totalIntake -> {
-//                Log.d("MainActivity", "Total Intake: " + totalIntake);
-//                runOnUiThread(() -> {
-//                    TextView textView = findViewById(R.id.text_home);
-//                    textView.setText(String.format(Locale.US, "%.2f", totalIntake));
-//                });
-//            });
         }
 
         @Override
@@ -174,5 +152,116 @@ private ActivityMainBinding binding;
                 .build();
         WorkManager.getInstance(getApplicationContext())
                 .enqueue(weatherWorkRequest);
+    }
+
+    @SuppressLint("MissingPermission")
+    public void showSleepNotification(double recommendedSleepDuration) {
+        int notificationId = 1003;
+        String channelId = "SLEEP_NOTIFICATION";
+
+        String message = "We recommend sleeping " + recommendedSleepDuration + " hours tonight.";
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), channelId);
+        builder.setSmallIcon(R.drawable.baseline_notifications)
+                .setContentTitle("Quick Health Manager")
+                .setContentText(message)
+                .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        Intent intent = new Intent(getApplicationContext(), SleepNotifActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra("data", "Parameters");
+        PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),
+                4, intent, PendingIntent.FLAG_MUTABLE);
+        builder.setContentIntent(pendingIntent);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationManager manager = (NotificationManager)
+                    getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+            NotificationChannel notificationChannel =
+                    manager.getNotificationChannel(channelId);
+            if (notificationChannel == null) {
+                int importance = NotificationManager.IMPORTANCE_DEFAULT;
+                notificationChannel = new NotificationChannel(channelId, "Description", importance);
+
+                notificationChannel.setLightColor(Color.BLUE);
+                notificationChannel.enableVibration(true);
+                manager.createNotificationChannel(notificationChannel);
+            }
+        }
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        notificationManager.notify(notificationId, builder.build());
+    }
+
+    private CompletableFuture<Double> getUserAge() {
+        if(user == null)    return null;
+
+        CompletableFuture<Double> future = new CompletableFuture<>();
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        DocumentReference userDoc = firestore.collection("users").document(user.getUid());
+
+        userDoc.get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                Double age = documentSnapshot.getDouble("age");
+                future.complete(age);
+            }
+        }).addOnFailureListener(e -> {
+            Log.e("Firestore", "Error getting user age: " + e.getMessage());
+        });
+        return future;
+    }
+
+    private CompletableFuture<Double> getUserLastSleepDuration() {
+        if(user == null)    return null;
+
+        CompletableFuture<Double> future = new CompletableFuture<>();
+        FirebaseFirestore firestore = FirebaseFirestore.getInstance();
+        DocumentReference userDocRef = firestore.collection("users").document(user.getUid());
+
+        userDocRef.get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                List<Map<String, Object>> sleepHistory = (List<Map<String, Object>>) documentSnapshot.get("sleepHistory");
+                if (sleepHistory != null && !sleepHistory.isEmpty()) {
+                    Map<String, Object> firstEntry = sleepHistory.get(0);
+                    future.complete((Double) firstEntry.get("sleepDuration"));
+                } else {
+                    Log.d("Firestore", "Sleep history array is empty");
+                }
+            } else {
+                Log.d("Firestore", "User document does not exist");
+            }
+        }).addOnFailureListener(e -> {
+            Log.e("Firestore", "Error getting user document: " + e.getMessage());
+        });
+
+        return future;
+    }
+
+    private void startSleepNotification() {
+        CompletableFuture<Double> lastSleepDurationFuture = getUserLastSleepDuration();
+        CompletableFuture<Double> ageFuture = getUserAge();
+
+        CompletableFuture<Void> combinedFuture = CompletableFuture.allOf(lastSleepDurationFuture, ageFuture);
+
+        combinedFuture.thenRun(() -> {
+            try {
+                Double lastSleepDuration = lastSleepDurationFuture.get();
+                Double age = ageFuture.get();
+                SleepRecommender sleepRecommender = new SleepRecommender(age.intValue(), lastSleepDuration.intValue());
+                int recommendedSleep = sleepRecommender.sleepAmountRecommender();
+
+                showSleepNotification(recommendedSleep);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private void scheduleSleepNotification(int scheduledHour) {
+        Calendar cal = Calendar.getInstance();
+        int hour = cal.get(Calendar.HOUR_OF_DAY);
+
+        if(hour == scheduledHour)
+            startSleepNotification();
     }
 }
