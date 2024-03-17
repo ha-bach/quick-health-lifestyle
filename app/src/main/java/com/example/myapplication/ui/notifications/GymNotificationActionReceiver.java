@@ -54,19 +54,21 @@ public class GymNotificationActionReceiver extends BroadcastReceiver {
                     }
                 });
 
-        int date = Calendar.getInstance().get(Calendar.DATE);
-        userDocRef.update("exerciseHistory." + date, userAgreed)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "Exercise history record pushed to Firestore: " + userAgreed);
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.e(TAG, "Failed to push exercise history record to Firestore", e);
-                    }
-                });
+
+        //int date = Calendar.getInstance().get(Calendar.DATE);
+        //userDocRef.update("exerciseHistory." + date, userAgreed)
+        //        .addOnSuccessListener(new OnSuccessListener<Void>() {
+        //            @Override
+        //            public void onSuccess(Void aVoid) {
+        //                Log.d(TAG, "Exercise history record pushed to Firestore: " + userAgreed);
+        //            }
+        //        })
+        //        .addOnFailureListener(new OnFailureListener() {
+        //            @Override
+        //            public void onFailure(@NonNull Exception e) {
+        //                Log.e(TAG, "Failed to push exercise history record to Firestore", e);
+        //            }
+        //        });
+
     }
 }

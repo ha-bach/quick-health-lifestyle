@@ -1,5 +1,6 @@
 package com.example.myapplication.exercise;
 
+// Simple exercise amount recommendation service based on age and CDC guidelines to compliment exercise notification service
 public class ExerciseRecommender {
     private int age;
 

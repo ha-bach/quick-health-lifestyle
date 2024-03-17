@@ -37,6 +37,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
+// Dashboard fragment = insights page
 public class DashboardFragment extends Fragment {
 
 private FragmentDashboardBinding binding;
@@ -63,6 +64,7 @@ private FragmentDashboardBinding binding;
         userID = user.getUid();
         firestore = FirebaseFirestore.getInstance();
 
+        // Initializing line charts
         sleepLineChart = binding.insightsSleepLinechart;
         sleepLineChart.setTouchEnabled(true);
         sleepLineChart.setDragEnabled(true);
@@ -108,8 +110,11 @@ private FragmentDashboardBinding binding;
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
                 if (getActivity() != null && documentSnapshot != null) {
+                    // Personalize title comment of insights page with user's first name
                     textViewInsightsTitle.setText(getString(R.string.insights_intro, documentSnapshot.getString("firstName")));
 
+
+                    // Dates for the x-axes of the graphs
                     DateFormat dateFormat = new SimpleDateFormat("MM-dd");
                     Calendar cal = Calendar.getInstance();
                     cal.add(Calendar.DATE, -7);
@@ -119,6 +124,8 @@ private FragmentDashboardBinding binding;
                         cal.add(Calendar.DATE, +1);
                     }
 
+
+                    // Line graph for sleep
                     ArrayList<ILineDataSet> sleepDataSets = new ArrayList<>();
                     List<Long> sleepHistory = (List<Long>)documentSnapshot.get("sleepHistory");
                     ArrayList<Entry> sleepEntries = new ArrayList<>();
@@ -151,6 +158,7 @@ private FragmentDashboardBinding binding;
                     sleepLineChart.getDescription().setEnabled(false);
 
 
+                    // Line graph for hydration
                     ArrayList<ILineDataSet> hydrationDataSets = new ArrayList<>();
                     List<Long> hydrationHistory = (List<Long>)documentSnapshot.get("hydrationHistory");
                     ArrayList<Entry> hydrationEntries = new ArrayList<>();
@@ -183,6 +191,7 @@ private FragmentDashboardBinding binding;
                     hydrationLineChart.getDescription().setEnabled(false);
 
 
+                    // Line graph for exercise
                     ArrayList<ILineDataSet> exerciseDataSets = new ArrayList<>();
                     List<Long> exerciseHistory = (List<Long>)documentSnapshot.get("exerciseHistory");
                     ArrayList<Entry> exerciseEntries = new ArrayList<>();

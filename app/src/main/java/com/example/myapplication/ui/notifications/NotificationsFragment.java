@@ -41,6 +41,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+// Notifications fragment = profile page
 public class NotificationsFragment extends Fragment {
 
 private FragmentNotificationsBinding binding;
@@ -55,6 +56,7 @@ private FragmentNotificationsBinding binding;
     String userID;
     FirebaseFirestore firestore;
 
+    // Update profile page with information from user's account in Firestore database
     public View onCreateView(@NonNull LayoutInflater inflater,
             ViewGroup container, Bundle savedInstanceState) {
         NotificationsViewModel notificationsViewModel =
@@ -87,6 +89,7 @@ private FragmentNotificationsBinding binding;
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
                 if (getActivity() != null && documentSnapshot != null) {
+                    // Personalize title comment of profile page with user's first name
                     textViewProfileTitle.setText(getString(R.string.profile_intro, documentSnapshot.getString("firstName")));
                     editTextFirstName.setText(documentSnapshot.getString("firstName"));
                     editTextLastName.setText(documentSnapshot.getString("lastName"));
@@ -100,7 +103,7 @@ private FragmentNotificationsBinding binding;
             }
         });
 
-
+        // Update user's account information when edited and update button is pressed
         updateButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {
@@ -156,6 +159,7 @@ private FragmentNotificationsBinding binding;
             }
         });
 
+        // Log user out of their account when logout button is pressed
         logoutButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view) {

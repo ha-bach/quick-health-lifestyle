@@ -162,7 +162,14 @@ public class HydrationService extends Service {
             personalIntakeFactor -= 0.1;
             if(sex.equalsIgnoreCase("male")) personalIntakeFactor += 0.3;
         }
-        return intakePerKg * personalIntakeFactor * weight;
+        double personalIntake = intakePerKg * personalIntakeFactor * weight;
+        if(personalIntake >= 13) {
+            return 13;
+        }
+        else if(personalIntake <= 4) {
+            return 4;
+        }
+        return personalIntake;
     }
 
     @Nullable

@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 
+// Home fragment = home page
 public class HomeFragment extends Fragment {
 
 private FragmentHomeBinding binding;
@@ -65,24 +66,31 @@ private FragmentHomeBinding binding;
         userID = user.getUid();
         firestore = FirebaseFirestore.getInstance();
         DocumentReference documentReference = firestore.collection("users").document(userID);
+
+        // Update home page with information from user's account in Firestore database and display calculated recommendations
         documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
                 if (getActivity() != null && documentSnapshot != null) {
+                    // Personalize title comment of home page with user's first name
                     textViewHomeTitle.setText(getString(R.string.home_intro, documentSnapshot.getString("firstName")));
 
-                    int yesterdaysSleepHours = Math.toIntExact((((List<Long>)documentSnapshot.get("sleepHistory")).get(0)));
+                    // Recommended sleep and yesterday's sleep
+                    int yesterdaysSleepHours = Math.toIntExact((((List<Long>)documentSnapshot.get("sleepHistory")).get(1)));
                     SleepRecommender sleepRecommender = new SleepRecommender(Math.toIntExact((Long)(documentSnapshot.get("age"))), yesterdaysSleepHours);
                     recommendedSleep.setText(getString(R.string.home_placeholder_rec1, Integer.toString(sleepRecommender.sleepAmountRecommender())));
                     yesterdaysSleep.setText(getString(R.string.home_placeholder_rec1, Integer.toString(yesterdaysSleepHours)));
 
+                    // Hydration status
                     boolean hydratedToday = documentSnapshot.getBoolean("hydratedToday");
                     if (hydratedToday)
                         hydrationSatisfied.setText("Complete");
 
+                    // Recommended exercise amount
                     ExerciseRecommender exerciseRecommender = new ExerciseRecommender(Math.toIntExact((Long)(documentSnapshot.get("age"))));
                     recommendedExercise.setText(getString(R.string.home_placeholder_rec3, exerciseRecommender.exerciseAmountRecommender()));
 
+                    // Exercise status
                     boolean exercisedToday = documentSnapshot.getBoolean("exercisedToday");
                     if (exercisedToday)
                         exerciseSatisfied.setText("Complete");
